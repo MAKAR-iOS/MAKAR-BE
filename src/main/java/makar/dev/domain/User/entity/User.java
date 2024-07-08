@@ -5,7 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import makar.dev.domain.Route.entity.Route;
-import makar.dev.domain.Route.entity.SelectedRoute;
+import makar.dev.domain.Noti.entity.Noti;
 import makar.dev.domain.Station.entity.Station;
 
 import java.util.List;
@@ -29,12 +29,12 @@ public class User {
     @ManyToOne
     private Station favoriteSchoolStation; //즐겨찾는 역_학교
 
-    @OneToOne
-    private SelectedRoute route; //설정된 경로
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
+    private List<Noti> notiList; //알림 설정
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Route> recentRouteList; //최근 경로 리스트
 
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Route> favoriteRouteList; //즐겨찾는 경로 리스트
 }

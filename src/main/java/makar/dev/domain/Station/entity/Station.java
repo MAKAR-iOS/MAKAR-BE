@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import makar.dev.domain.Transfer.entity.Transfer;
 
 
 @NoArgsConstructor
@@ -18,4 +19,8 @@ public class Station {
 
     @Column(nullable = false)
     private String stationName;
+
+    @ManyToOne
+    @JoinColumn(name="transfer_id", nullable = false)
+    private Transfer transfer;
 }
