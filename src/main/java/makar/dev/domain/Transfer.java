@@ -23,8 +23,8 @@ public class Transfer {
     @JoinColumn(name="route_id", nullable = false)
     private Route route;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
-    @Column(nullable = false)
-    private List<Station> stationList;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
+//    @Column(nullable = false)
+//    private List<Station> stationList;
 
 }

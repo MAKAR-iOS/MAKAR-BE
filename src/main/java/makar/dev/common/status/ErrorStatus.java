@@ -20,7 +20,14 @@ public enum ErrorStatus {
      * Code : 400
      * Bad Request
      */
-    INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다.");
+    INVALID_API_KEY(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 API Key입니다."),
+    INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다."),
+
+
+    /**
+     * Code : 500
+     */
+    FAILURE_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "데이터 초기화에 실패했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;
