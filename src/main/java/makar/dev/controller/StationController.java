@@ -16,7 +16,7 @@ public class StationController {
 
     @GetMapping("/init")
     ApiResponse initStation(){
-        stationService.initDatabase();
+//        stationService.initDatabase();
         return ApiResponse.SuccessResponse(SuccessStatus._OK);
     }
 }

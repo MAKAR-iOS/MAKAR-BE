@@ -10,16 +10,13 @@ import org.springframework.stereotype.Service;
 @RequiredArgsConstructor
 public class StationService {
     private final StationRepository stationRepository;
+    private final DataConverter databaseConverter;
 
     public void initDatabase(){
         // init database
-        DataConverter databaseConverter = new DataConverter(stationRepository);
         databaseConverter.readExcelFileAndSave();
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-                databaseConverter.readUniqueStationNameAndSearchStation();
-//                databaseConverter.addCleanStationNameAtDB();
+        databaseConverter.readUniqueStationNameAndSearchStation();
+        databaseConverter.addCleanStationNameAtDB();
 //                databaseConverter.validateOdsayStationsDataFromDB();
 //                databaseConverter.modifyOdsayStationData();
 //                databaseConverter.updateStationsCollection();
@@ -31,8 +28,7 @@ public class StationService {
 //                databaseConverter.validateTransferInfo();
 //                databaseConverter.validateLineSequences2();
 //                databaseConverter.validateLineSequences33("1신창");
-//            }
-//        }).start();
+//
     }
 
 }

@@ -10,7 +10,14 @@ import java.util.List;
 public class OdsayStation {
 
     @JsonProperty("result")
-    private List<Station> result;
+    private Result result;
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Result {
+        @JsonProperty("station")
+        private List<Station> station;
+    }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     @Getter

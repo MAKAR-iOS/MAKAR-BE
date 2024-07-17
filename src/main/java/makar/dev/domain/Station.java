@@ -51,4 +51,18 @@ public class Station {
 //    @ManyToOne
 //    @JoinColumn(name="transfer_id", nullable = false)
 //    private Transfer transfer;
+
+    @Override
+    public String toString() {
+        return "Station{" +
+                "stationName='" + stationName + '\'' +
+                ", stationCode='" + stationCode + '\'' +
+                ", lineNum='" + lineNum + '\'' +
+                ", railOpr='" + railOpr + '\'' +
+                ", odsayStationID=" + odsayStationID +
+                ", x=" + x +
+                ", y=" + y +
+                ", odsayLaneType=" + odsayLaneType +
+                '}';
+    }
 }
