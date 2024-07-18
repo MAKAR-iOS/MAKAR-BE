@@ -10,4 +10,6 @@ public interface StationRepository extends JpaRepository<Station, Long> {
     List<Station> findByStationNameAndLineNum(String stationName, String lineNum);
     Station findByStationNameAndOdsayLaneType(String stationName, int code);
 
+    List<Station> findByStationNameContaining(String stationName);
+
 }
