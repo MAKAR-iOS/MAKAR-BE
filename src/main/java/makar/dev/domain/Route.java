@@ -34,8 +34,8 @@ public class Route {
     @Column(nullable = false)
     private int transferCount; //환승 횟수
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
-    @Column(nullable = false)
-    private List<Transfer> transferList;
+//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
+//    @Column(nullable = false)
+//    private List<Transfer> transferList;
 
 }

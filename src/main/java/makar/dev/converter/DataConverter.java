@@ -36,7 +36,7 @@ public class DataConverter {
     private final LineStationRepository lineStationRepository;
 
     // station information save in database
-    public void readExcelFileAndSave() {
+    public void readAndSaveStationInfo() {
         try {
             Sheet sheet = readExcelFile("assets/stations_info.xlsx");
 
@@ -48,7 +48,7 @@ public class DataConverter {
                     String lineNum = row.getCell(3).getStringCellValue();
                     String railOpr = row.getCell(0).getStringCellValue();
 
-                    Station station = new Station(stationName, stationCode, lineNum, railOpr);
+                    Station station = StationConverter.toStation(stationName, stationCode, lineNum, railOpr);
                     stationRepository.save(station);
                 }
             }
@@ -249,6 +249,18 @@ public class DataConverter {
         if (stationName.equals("촌"))
             return "역촌";
         return stationName;
+    }
+
+    // parse transfer information and save
+    public void readAndSaveTransferInfo() {
+        try {
+            Sheet sheet = readExcelFile("assets/transfer_info.xlsx");
+
+
+
+        } catch (Exception e){
+            throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+        }
     }
 
     private Sheet readExcelFile(String path) throws IOException {
