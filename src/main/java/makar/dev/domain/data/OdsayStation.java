@@ -8,6 +8,7 @@ import java.util.List;
 
 @Getter
 public class OdsayStation {
+    // Odsay 대중교통 정류장 검색 API 호출을 위한 Class
 
     @JsonProperty("result")
     private Result result;
