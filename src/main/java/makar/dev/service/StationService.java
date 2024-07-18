@@ -13,14 +13,15 @@ public class StationService {
     private final DataConverter databaseConverter;
 
     public void initDatabase(){
-        // init database
-        databaseConverter.readExcelFileAndSave();
-        databaseConverter.readUniqueStationNameAndSearchStation();
-        databaseConverter.addCleanStationNameAtDB();
-//                databaseConverter.validateOdsayStationsDataFromDB();
-//                databaseConverter.modifyOdsayStationData();
-//                databaseConverter.updateStationsCollection();
-//                databaseConverter.readExcelFileAndSaveLineMap(2);
+        // parse station information
+//        databaseConverter.readExcelFileAndSave();
+//        databaseConverter.readUniqueStationNameAndSearchStation();
+//        databaseConverter.addCleanStationNameAtDB();
+
+        // parse linemap information
+        databaseConverter.readExcelFileAndSaveLineMap(7); // 7호선 노선도 parsing
+//        databaseConverter.readExcelFileAndSaveLineMap(2); // 2호선 노선도 parsing
+
 //                databaseConverter.copyField("1", "2", "1신창");
 //                databaseConverter.copyFieldToAnotherDocument("1", "1", 5, "5하남검단산");
 //                databaseConverter.saveNewLine(1, "1", "2", "1신창");

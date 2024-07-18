@@ -36,8 +36,14 @@ public class Station {
     @Column(nullable = false)
     private String railOpr;
 
+//    @Column(nullable = false)
+//    private int odsayStationName;
+
     @Column(nullable = false)
     private int odsayStationID;
+
+    @Column(nullable = false)
+    private int odsayLaneType;
 
     @Column(nullable = false)
     private double x;
@@ -45,8 +51,6 @@ public class Station {
     @Column(nullable = false)
     private double y;
 
-    @Column(nullable = false)
-    private int odsayLaneType;
 
 //    @ManyToOne
 //    @JoinColumn(name="transfer_id", nullable = false)
