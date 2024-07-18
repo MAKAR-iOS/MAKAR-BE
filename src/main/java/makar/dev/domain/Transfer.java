@@ -48,4 +48,16 @@ public class Transfer {
 //    @Column(nullable = false)
 //    private List<Station> stationList;
 
+    @Override
+    public String toString() {
+        return "Transfer{" +
+                "stationName='" + odsayStationName + '\'' +
+                ", toLineNum='" + toLineNum + '\'' +
+                ", toStationId='" + toStationId + '\'' +
+                ", fromLineNum='" + fromLineNum + '\'' +
+                ", fromStationId=" + fromStationId +
+                ", transferTime=" + transferTime +
+                '}';
+    }
+
 }

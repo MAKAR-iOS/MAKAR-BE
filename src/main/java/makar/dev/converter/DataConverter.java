@@ -7,10 +7,12 @@ import makar.dev.common.status.ErrorStatus;
 import makar.dev.domain.LineMap;
 import makar.dev.domain.LineStation;
 import makar.dev.domain.Station;
+import makar.dev.domain.Transfer;
 import makar.dev.domain.data.OdsayStation;
 import makar.dev.repository.LineMapRepository;
 import makar.dev.repository.LineStationRepository;
 import makar.dev.repository.StationRepository;
+import makar.dev.repository.TransferRepository;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -34,6 +36,7 @@ public class DataConverter {
     private final OdsayClient odsayClient;
     private final LineMapRepository lineMapRepository;
     private final LineStationRepository lineStationRepository;
+    private final TransferRepository transferRepository;
 
     // station information save in database
     public void readAndSaveStationInfo() {
@@ -87,7 +90,7 @@ public class DataConverter {
             int stationType = odsayStation.getType();
             String lineNum = mapOdsayStationTypeToLineNum(stationType);
 
-            if (lineNum == null){
+            if (lineNum == null) {
                 continue;
             }
 
@@ -109,7 +112,7 @@ public class DataConverter {
         station.setX(odsayStation.getX());
         station.setY(odsayStation.getY());
         station.setOdsayLaneType(odsayStation.getType());
-        System.out.println("station : "+station.toString());
+        System.out.println("station : " + station.toString());
     }
 
     private String mapOdsayStationTypeToLineNum(int stationType) {
@@ -152,7 +155,7 @@ public class DataConverter {
 
     // parse line map information and save
     public void readExcelFileAndSaveLineMap(int code) {
-        try{
+        try {
             Sheet sheet = readExcelFile("assets/linemap.xlsx");
 
             // 노선도의 역 이름 리스트 추출
@@ -170,29 +173,29 @@ public class DataConverter {
             LineMap lineMap = LineConverter.toLineMap(code, upLineStationList.get(0).getStationName(), upLineStationList);
             lineMapRepository.save(lineMap);
 
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
         }
     }
 
     private String parseLineMapOrder(Sheet sheet, int code) {
         int rowIndex =
-        switch (code){
-            case 10 -> 37; // 신창행
-            case 11 -> 38; // 인천행
-            case 20 -> 12; // 까치산행
-            case 21 -> 10; // 성수외선행
-            case 22 -> 11; // 신설동행
-            case 3 -> 39;
-            case 4 -> 40;
-            case 50 -> 34; // 마천행
-            case 51 -> 15; // 하남검단산행
-            case 6 -> 16;
-            case 7 -> 41;
-            case 8 -> 18;
-            case 9 -> 42;
-            default -> 0;
-        };
+                switch (code) {
+                    case 10 -> 37; // 신창행
+                    case 11 -> 38; // 인천행
+                    case 20 -> 12; // 까치산행
+                    case 21 -> 10; // 성수외선행
+                    case 22 -> 11; // 신설동행
+                    case 3 -> 39;
+                    case 4 -> 40;
+                    case 50 -> 34; // 마천행
+                    case 51 -> 15; // 하남검단산행
+                    case 6 -> 16;
+                    case 7 -> 41;
+                    case 8 -> 18;
+                    case 9 -> 42;
+                    default -> 0;
+                };
 
         Row row = sheet.getRow(rowIndex);
         return row.getCell(4).getStringCellValue();
@@ -219,14 +222,10 @@ public class DataConverter {
         for (int i = 0; i < list.size(); i++) {
             // odsay 역 이름 리스트 검색
             String stationName = doubleCheckStationName(list.get(i));
-            List<Station> stations = stationRepository.findByStationNameAndOdsayLaneType(stationName, code);
-
-            if (stations.size() != 1)
-                throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code);
 
             // TODO: get odsayStationName, put data in line station entity
             // ""호선의 ""역의 odsay 역 이름, odsayStationId 저장
-            Station station = stations.get(0);
             LineStation lineStation = LineConverter.toLineStation(station.getOdsayStationID(), station.getStationName());
             orderedStations.add(lineStation);
         }
@@ -236,7 +235,7 @@ public class DataConverter {
         return orderedStations;
     }
 
-    private String doubleCheckStationName(String stationName){
+    private String doubleCheckStationName(String stationName) {
         // '역'이 빠진 지하철 이름 수정
         if (stationName.equals("서울"))
             return "서울역";
@@ -256,11 +255,66 @@ public class DataConverter {
         try {
             Sheet sheet = readExcelFile("assets/transfer_info.xlsx");
 
+            for (int i = 2; i <= sheet.getLastRowNum(); i++) {
+                Row row = sheet.getRow(i);
+                if (row == null)
+                    continue;
 
+                // parse transfer information
+                String stationName = parseTransferStationName(row);
+                int fromLineNum = (int) row.getCell(1).getNumericCellValue();
+                int toLineNum = parseTransferToLineNum(row);
+                int transferTime = parseTransferTime(row);
 
-        } catch (Exception e){
+                if (toLineNum == 0)
+                    continue;
+
+                // get odsay Station Id
+                int fromStationId = getOdsayStationId(stationName, fromLineNum);
+                int toStationId = getOdsayStationId(stationName, toLineNum);
+
+                Transfer transfer = TransferConverter.toTransfer(stationName, fromLineNum, fromStationId, toLineNum, toStationId, transferTime);
+                transferRepository.save(transfer);
+                System.out.println(transfer.toString());
+            }
+        } catch(Exception e) {
             throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
         }
+    }
+
+    private String parseTransferStationName(Row row){
+        String stationName = row.getCell(2).getStringCellValue();
+
+        if (stationName.equals("이수"))
+            stationName = "총신대입구";
+
+        return stationName;
+    }
+
+    private int parseTransferToLineNum(Row row){
+        String toLine = row.getCell(3).getStringCellValue();
+        if (toLine.equals("경의중앙선"))
+            return 104;
+        if (toLine.equals("공항철도"))
+            return 101;
+
+        String[] parts = toLine.split("호선");
+        try {
+            return Integer.parseInt(parts[0]);
+        } catch (NumberFormatException e) {
+            return 0;
+        }
+    }
+
+    private int parseTransferTime(Row row){
+        String time = row.getCell(5).getStringCellValue();
+        String[] parts = time.split("분");
+        return Integer.parseInt(parts[0]) + 1;
+    }
+
+    private int getOdsayStationId(String stationName, int odsayLaneType){
+        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType);
+        return station.getOdsayStationID();
     }
 
     private Sheet readExcelFile(String path) throws IOException {

@@ -8,6 +8,6 @@ import java.util.List;
 
 public interface StationRepository extends JpaRepository<Station, Long> {
     List<Station> findByStationNameAndLineNum(String stationName, String lineNum);
-    List<Station> findByStationNameAndOdsayLaneType(String stationName, int code);
+    Station findByStationNameAndOdsayLaneType(String stationName, int code);
 
 }
