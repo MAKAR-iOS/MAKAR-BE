@@ -317,6 +317,26 @@ public class DataConverter {
         return station.getOdsayStationID();
     }
 
+    public void saveReverseTransferInfo() {
+        List<Transfer> transferList = transferRepository.findAll();
+
+        for (Transfer transfer : transferList) {
+            int fromLineNum = transfer.getFromLineNum();
+            int toLineNum = transfer.getToLineNum();
+            String stationName = transfer.getOdsayStationName();
+
+            // 반대 방향의 환승 정보가 존재하는지 확인
+            if (transferRepository.existsByFromLineNumAndToLineNumAndOdsayStationName(toLineNum, fromLineNum, stationName))
+                continue;
+
+            // 존재하지 않다면 반대 방향 환승 정보 추가
+            int fromStationId = transfer.getFromStationId();
+            int toStationId = transfer.getToStationId();
+            Transfer oppisiteTransfer = TransferConverter.toTransfer(stationName, toLineNum, toStationId, fromLineNum, fromStationId, transfer.getTransferTime());
+            transferRepository.save(oppisiteTransfer);
+        }
+    }
+
     private Sheet readExcelFile(String path) throws IOException {
         ClassPathResource classPathResource = new ClassPathResource(path);
         InputStream inputStream = classPathResource.getInputStream();

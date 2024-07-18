@@ -35,6 +35,7 @@ public class StationService {
 
         // parse transfer information
         databaseConverter.readAndSaveTransferInfo();
+        databaseConverter.saveReverseTransferInfo();
 
     }
 
