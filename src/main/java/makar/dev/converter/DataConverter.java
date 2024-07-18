@@ -160,9 +160,11 @@ public class DataConverter {
             List<String> lineStationNamelist = extractStationNamesNot(lineOrder);
             System.out.println(lineStationNamelist);
 
+            if (code >= 10)
+                code = code / 10;
+
             // odsay 역 이름으로 mapping 후 LineStation entity 생성
             List<LineStation> upLineStationList = mapOdsayStationNameWithLine(lineStationNamelist, code);
-            System.out.println(upLineStationList);
 
             // 호선 정보 저장
             LineMap lineMap = LineConverter.toLineMap(code, upLineStationList.get(0).getStationName(), upLineStationList);
@@ -173,14 +175,24 @@ public class DataConverter {
         }
     }
 
-    private String parseLineMapOrder(Sheet sheet, int code){
-        int rowIndex;
+    private String parseLineMapOrder(Sheet sheet, int code) {
+        int rowIndex =
         switch (code){
-            case 2 -> rowIndex = 12;
-            case 7 -> rowIndex = 1;
-            case 8 -> rowIndex = 18;
-            default -> rowIndex = 0;
-        }
+            case 10 -> 37; // 신창행
+            case 11 -> 38; // 인천행
+            case 20 -> 12; // 까치산행
+            case 21 -> 10; // 성수외선행
+            case 22 -> 11; // 신설동행
+            case 3 -> 39;
+            case 4 -> 40;
+            case 50 -> 34; // 마천행
+            case 51 -> 15; // 하남검단산행
+            case 6 -> 16;
+            case 7 -> 41;
+            case 8 -> 18;
+            case 9 -> 42;
+            default -> 0;
+        };
 
         Row row = sheet.getRow(rowIndex);
         return row.getCell(4).getStringCellValue();
@@ -195,17 +207,18 @@ public class DataConverter {
         for (String station : stationsArray) {
             // "-역"을 제거하여 역이름만 추출
             String stationName = station.split("-")[1].replace("역", "");
-            stationNames.add(stationName);
+            String cleanStationName = extractTextWithinParentheses(stationName);
+            stationNames.add(cleanStationName);
         }
         return stationNames;
     }
 
-    private List<LineStation> mapOdsayStationNameWithLine(List<String> list, int code){
+    private List<LineStation> mapOdsayStationNameWithLine(List<String> list, int code) {
         List<LineStation> orderedStations = new ArrayList<>();
 
         for (int i = 0; i < list.size(); i++) {
             // odsay 역 이름 리스트 검색
-            String stationName = list.get(i);
+            String stationName = doubleCheckStationName(list.get(i));
             List<Station> stations = stationRepository.findByStationNameAndOdsayLaneType(stationName, code);
 
             if (stations.size() != 1)
@@ -221,6 +234,21 @@ public class DataConverter {
         Collections.reverse(orderedStations);
 
         return orderedStations;
+    }
+
+    private String doubleCheckStationName(String stationName){
+        // '역'이 빠진 지하철 이름 수정
+        if (stationName.equals("서울"))
+            return "서울역";
+        if (stationName.equals("곡"))
+            return "역곡";
+        if (stationName.equals("삼"))
+            return "역삼";
+        if (stationName.equals("동대문사문화공원"))
+            return "동대문역사문화공원";
+        if (stationName.equals("촌"))
+            return "역촌";
+        return stationName;
     }
 
     private Sheet readExcelFile(String path) throws IOException {
