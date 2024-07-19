@@ -2,12 +2,13 @@ package makar.dev.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Builder
 @Entity
 public class Schedule {
     @Id

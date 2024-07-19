@@ -49,10 +49,6 @@ public class Station {
     private double y;
 
 
-//    @ManyToOne
-//    @JoinColumn(name="transfer_id", nullable = false)
-//    private Transfer transfer;
-
     @Override
     public String toString() {
         return "Station{" +

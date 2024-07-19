@@ -2,6 +2,7 @@ package makar.dev.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,7 +10,7 @@ import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Builder
 @Entity
 public class Route {
     @Id
@@ -34,8 +35,8 @@ public class Route {
     @Column(nullable = false)
     private int transferCount; //환승 횟수
 
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
-//    @Column(nullable = false)
-//    private List<Transfer> transferList;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "route")
+    @Column(nullable = false)
+    private List<SubRoute> subRouteList;
 
 }
