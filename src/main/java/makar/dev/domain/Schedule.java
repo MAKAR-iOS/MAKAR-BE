@@ -2,12 +2,13 @@ package makar.dev.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Builder
 @Entity
 public class Schedule {
     @Id
@@ -26,4 +27,8 @@ public class Schedule {
 
     @Column(nullable = false)
     private int totalTime; //전체 소요시간
+
+    public void setRoute(Route route){
+        this.route = route;
+    }
 }

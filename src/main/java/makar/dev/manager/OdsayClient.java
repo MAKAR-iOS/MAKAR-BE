@@ -1,4 +1,4 @@
-package makar.dev.converter;
+package makar.dev.manager;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -24,33 +24,37 @@ public class OdsayClient {
 
 
     //대중교통 정류장 찾기 api호출
-    public String searchStation(String stationName) throws IOException {
+    public String searchStation(String stationName) {
         System.out.println("apiKey : "+apiKey);
         if (apiKey == null || apiKey.isEmpty()) {
             throw new GeneralException(ErrorStatus.INVALID_API_KEY);
         }
 
-        StringBuilder urlBuilder = new StringBuilder("https://api.odsay.com/v1/api/searchStation");
+        try {
+            StringBuilder urlBuilder = new StringBuilder("https://api.odsay.com/v1/api/searchStation");
 
-        urlBuilder.append("?lang=" + URLEncoder.encode("0", "UTF-8"));
-        urlBuilder.append("&stationName=" + URLEncoder.encode(stationName, "UTF-8"));
-        urlBuilder.append("&stationClass=" + URLEncoder.encode("2", "UTF-8")); //2:지하철
-        urlBuilder.append("&apiKey=" + URLEncoder.encode(apiKey, "UTF-8"));
+            urlBuilder.append("?lang=" + URLEncoder.encode("0", "UTF-8"));
+            urlBuilder.append("&stationName=" + URLEncoder.encode(stationName, "UTF-8"));
+            urlBuilder.append("&stationClass=" + URLEncoder.encode("2", "UTF-8")); //2:지하철
+            urlBuilder.append("&apiKey=" + URLEncoder.encode(apiKey, "UTF-8"));
 
-        URL url = new URL(urlBuilder.toString());
-        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "application/json");
+            URL url = new URL(urlBuilder.toString());
+            HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+            conn.setRequestMethod("GET");
+            conn.setRequestProperty("Content-type", "application/json");
 
-        try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
+            try (BufferedReader bufferedReader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = bufferedReader.readLine()) != null) {
+                    sb.append(line);
+                }
+                return sb.toString();
+            } finally {
+                conn.disconnect();
             }
-            return sb.toString();
-        } finally {
-            conn.disconnect();
+        } catch (Exception e){
+            throw new GeneralException(ErrorStatus.FAILURE_API_REQUEST);
         }
     }
 

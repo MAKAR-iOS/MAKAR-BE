@@ -5,8 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import makar.dev.domain.Route;
-import makar.dev.domain.Station;
 
 import java.util.List;
 
@@ -39,14 +37,6 @@ public class Transfer {
     @Column(nullable = false)
     private int transferTime;
 
-
-//    @ManyToOne
-//    @JoinColumn(name="route_id", nullable = false)
-//    private Route route;
-
-//    @OneToMany(cascade = CascadeType.ALL, mappedBy = "transfer")
-//    @Column(nullable = false)
-//    private List<Station> stationList;
 
     @Override
     public String toString() {

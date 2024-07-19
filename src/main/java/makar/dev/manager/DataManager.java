@@ -1,16 +1,18 @@
-package makar.dev.converter;
+package makar.dev.manager;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
+import makar.dev.converter.LineConverter;
+import makar.dev.converter.StationConverter;
+import makar.dev.converter.TransferConverter;
 import makar.dev.domain.LineMap;
 import makar.dev.domain.LineStation;
 import makar.dev.domain.Station;
 import makar.dev.domain.Transfer;
 import makar.dev.domain.data.OdsayStation;
 import makar.dev.repository.LineMapRepository;
-import makar.dev.repository.LineStationRepository;
 import makar.dev.repository.StationRepository;
 import makar.dev.repository.TransferRepository;
 import org.apache.poi.ss.usermodel.Row;
@@ -20,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,11 +32,10 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class DataConverter {
+public class DataManager {
     private final StationRepository stationRepository;
     private final OdsayClient odsayClient;
     private final LineMapRepository lineMapRepository;
-    private final LineStationRepository lineStationRepository;
     private final TransferRepository transferRepository;
 
     // station information save in database
@@ -222,7 +222,8 @@ public class DataConverter {
         for (int i = 0; i < list.size(); i++) {
             // odsay 역 이름 리스트 검색
             String stationName = doubleCheckStationName(list.get(i));
-            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code);
+            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
 
             // TODO: get odsayStationName, put data in line station entity
             // ""호선의 ""역의 odsay 역 이름, odsayStationId 저장
@@ -313,7 +314,8 @@ public class DataConverter {
     }
 
     private int getOdsayStationId(String stationName, int odsayLaneType){
-        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType);
+        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
         return station.getOdsayStationID();
     }
 
@@ -337,10 +339,14 @@ public class DataConverter {
         }
     }
 
-    private Sheet readExcelFile(String path) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(path);
-        InputStream inputStream = classPathResource.getInputStream();
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        return workbook.getSheetAt(0);
+    private Sheet readExcelFile(String path) {
+        try {
+            ClassPathResource classPathResource = new ClassPathResource(path);
+            InputStream inputStream = classPathResource.getInputStream();
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            return workbook.getSheetAt(0);
+        } catch (Exception e){
+            throw new GeneralException(ErrorStatus.FAILURE_READ_EXCEL_FILE);
+        }
     }
 }

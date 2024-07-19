@@ -4,9 +4,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import makar.dev.domain.Route;
-import makar.dev.domain.Noti;
-import makar.dev.domain.Station;
 
 import java.util.List;
 
