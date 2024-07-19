@@ -23,6 +23,11 @@ public enum ErrorStatus {
     INVALID_API_KEY(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 API Key입니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다."),
 
+    /**
+     * Code : 404
+     */
+    NOT_FOUND_STATION(HttpStatus.NOT_FOUND, 404, "존재하지 않는 역 정보입니다."),
+
 
     /**
      * Code : 500

@@ -1,7 +1,7 @@
 package makar.dev.service;
 
 import lombok.RequiredArgsConstructor;
-import makar.dev.converter.DataConverter;
+import makar.dev.manager.DataConverter;
 import makar.dev.repository.UserRepository;
 import org.springframework.stereotype.Service;
 

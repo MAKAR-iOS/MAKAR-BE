@@ -1,9 +1,12 @@
-package makar.dev.converter;
+package makar.dev.manager;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
+import makar.dev.converter.LineConverter;
+import makar.dev.converter.StationConverter;
+import makar.dev.converter.TransferConverter;
 import makar.dev.domain.LineMap;
 import makar.dev.domain.LineStation;
 import makar.dev.domain.Station;
@@ -222,7 +225,8 @@ public class DataConverter {
         for (int i = 0; i < list.size(); i++) {
             // odsay 역 이름 리스트 검색
             String stationName = doubleCheckStationName(list.get(i));
-            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code);
+            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code)
+                    .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
 
             // TODO: get odsayStationName, put data in line station entity
             // ""호선의 ""역의 odsay 역 이름, odsayStationId 저장
@@ -313,7 +317,8 @@ public class DataConverter {
     }
 
     private int getOdsayStationId(String stationName, int odsayLaneType){
-        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType);
+        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
         return station.getOdsayStationID();
     }
 
