@@ -13,7 +13,6 @@ import makar.dev.domain.Station;
 import makar.dev.domain.Transfer;
 import makar.dev.domain.data.OdsayStation;
 import makar.dev.repository.LineMapRepository;
-import makar.dev.repository.LineStationRepository;
 import makar.dev.repository.StationRepository;
 import makar.dev.repository.TransferRepository;
 import org.apache.poi.ss.usermodel.Row;
@@ -34,11 +33,10 @@ import java.util.regex.Pattern;
 @Service
 @RequiredArgsConstructor
 @Transactional
-public class DataConverter {
+public class DataManager {
     private final StationRepository stationRepository;
     private final OdsayClient odsayClient;
     private final LineMapRepository lineMapRepository;
-    private final LineStationRepository lineStationRepository;
     private final TransferRepository transferRepository;
 
     // station information save in database

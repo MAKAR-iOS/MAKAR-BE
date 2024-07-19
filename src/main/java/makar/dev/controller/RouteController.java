@@ -20,7 +20,7 @@ public class RouteController {
 
     // 경로 리스트 조회
     @GetMapping()
-    public ApiResponse searchRoute(@RequestBody RouteRequest.SearchRouteDto searchRouteDto) throws IOException {
+    public ApiResponse searchRoute(@RequestBody RouteRequest.SearchRouteDto searchRouteDto) {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(searchRouteDto));
     }
 

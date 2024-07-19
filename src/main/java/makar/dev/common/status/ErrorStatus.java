@@ -27,12 +27,15 @@ public enum ErrorStatus {
      * Code : 404
      */
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, 404, "존재하지 않는 역 정보입니다."),
+    NOT_FOUND_LINE_MAP(HttpStatus.NOT_FOUND, 404, "존재하지 않는 지하철 노선도 정보입니다."),
+    NOT_FOUND_LINE_STATION(HttpStatus.NOT_FOUND, 404, "지하철 노선도 역 리스트가 존재하지 않습니다."),
 
 
     /**
      * Code : 500
      */
-    FAILURE_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "데이터 초기화에 실패했습니다.");
+    FAILURE_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "데이터 초기화에 실패했습니다."),
+    FAILURE_API_REQUEST(HttpStatus.NOT_IMPLEMENTED, 500, "API 호출 중 오류가 발생했습니다.");
 
     private final HttpStatus httpStatus;
     private final int code;

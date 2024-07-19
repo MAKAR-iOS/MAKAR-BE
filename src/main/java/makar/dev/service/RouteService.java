@@ -10,6 +10,7 @@ import makar.dev.domain.data.RouteSearchResponse;
 import makar.dev.dto.request.RouteRequest;
 import makar.dev.dto.response.RouteResponse;
 import makar.dev.manager.APIManager;
+import makar.dev.manager.MakarManager;
 import makar.dev.repository.RouteRepository;
 import makar.dev.repository.ScheduleRepository;
 import makar.dev.repository.StationRepository;
@@ -32,17 +33,16 @@ public class RouteService {
     private final StationRepository stationRepository;
     private final ScheduleRepository scheduleRepository;
     private final APIManager apiManager;
+    private final MakarManager makarManager;
     private final TransferService transferService;
 
     // 경로 리스트 검색
-    public RouteResponse.SearchRouteDto searchRoute(RouteRequest.SearchRouteDto searchRouteDto) throws IOException {
+    public RouteResponse.SearchRouteDto searchRoute(RouteRequest.SearchRouteDto searchRouteDto) {
         Station sourceStation = findStation(searchRouteDto.getSourceStationName(), searchRouteDto.getSourceLineNum());
         Station destinationStation = findStation(searchRouteDto.getDestinationStationName(), searchRouteDto.getDestinationLineNum());
 
         // search route
-        List<Route> routeList = new ArrayList<>();
-        routeList= getRoutes(sourceStation, destinationStation);
-
+        List<Route> routeList = getRoutes(sourceStation, destinationStation);
         return RouteConverter.toSearchRouteDto(routeList);
     }
 
@@ -52,7 +52,7 @@ public class RouteService {
     }
 
     // 경로 리스트 구하기
-    private List<Route> getRoutes(Station sourceStation, Station destinationStation) throws IOException {
+    private List<Route> getRoutes(Station sourceStation, Station destinationStation){
         RouteSearchResponse routeSearchResponse = apiManager.requestRoute(sourceStation.getX(), sourceStation.getY(), destinationStation.getX(), destinationStation.getY());
         List<Route> routes = new ArrayList<>();
         List<RouteSearchResponse.Path> paths = routeSearchResponse.getResult().getPath();
@@ -102,8 +102,9 @@ public class RouteService {
         int totalTime = getTransferTimeInRoute(subRouteList);
 
         //막차시간 구하기
-        String sourceTime = getMakarTimeInRoutes(subRouteList);
+        String sourceTime = getMakarTime(subRouteList);
 
+        // TODO: destinationTime
         Schedule schedule = ScheduleConverter.toSchedule(sourceTime, "", totalTime);
         scheduleRepository.save(schedule);
         return schedule;
@@ -164,6 +165,13 @@ public class RouteService {
         return totalTime;
     }
 
+    // 막차시간 구하기
+    private String getMakarTime(List<SubRoute> subRouteList) {
+            Calendar calendar = Calendar.getInstance();
+            int dayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
+            Calendar takingTime = makarManager.computeMakarTime(subRouteList, dayOfWeek);
+            return takingTime.getTime().toString();
+    }
 
 }
