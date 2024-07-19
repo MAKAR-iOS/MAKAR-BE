@@ -40,4 +40,13 @@ public class SubRoute {
     public void setTransferTime(int transferTime){
         this.transferTime = transferTime;
     }
+
+    @Override
+    public String toString(){
+        return lineNum+"호선/"+
+                fromStationCode + " "+fromStationName+"역 -> " +
+                toStationCode + " "+toStationName+"역/" +
+                "sectionTime="+sectionTime+
+                "transferTime="+transferTime;
+    }
 }

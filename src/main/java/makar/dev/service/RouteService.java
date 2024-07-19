@@ -1,5 +1,6 @@
 package makar.dev.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
@@ -11,6 +12,7 @@ import makar.dev.dto.request.RouteRequest;
 import makar.dev.dto.response.RouteResponse;
 import makar.dev.manager.APIManager;
 import makar.dev.manager.MakarManager;
+import makar.dev.repository.LineMapRepository;
 import makar.dev.repository.RouteRepository;
 import makar.dev.repository.ScheduleRepository;
 import makar.dev.repository.StationRepository;
@@ -31,6 +33,7 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final StationRepository stationRepository;
     private final ScheduleRepository scheduleRepository;
+    private final LineMapRepository lineMapRepository;
     private final APIManager apiManager;
     private final MakarManager makarManager;
     private final TransferService transferService;
@@ -65,7 +68,13 @@ public class RouteService {
                 continue;
             }
 
+            // TODO: TransferTime
             List<SubRoute> subRouteList = createSubRoutes(path);
+
+            for (SubRoute subRoute : subRouteList){
+                System.out.println("SubRoute : "+subRoute.toString());
+            }
+
             Schedule schedule = createSchedule(subRouteList);
 
             // route 생성
@@ -96,7 +105,8 @@ public class RouteService {
         return subRouteList;
     }
 
-    private Schedule createSchedule(List<SubRoute> subRouteList) {
+    @Transactional
+    public Schedule createSchedule(List<SubRoute> subRouteList) {
         //환승소요시간을 포함해서 전체소요시간 구하기
         int totalTime = getTransferTimeInRoute(subRouteList);
 

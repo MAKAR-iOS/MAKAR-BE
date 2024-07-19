@@ -24,10 +24,10 @@ public class LineMap {
     @Column(nullable = false)
     private String startStationName;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LineStation> upLineList;
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<LineStation> downLineList;
 
 }
