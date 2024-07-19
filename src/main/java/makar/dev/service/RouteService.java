@@ -16,7 +16,6 @@ import makar.dev.repository.ScheduleRepository;
 import makar.dev.repository.StationRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

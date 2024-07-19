@@ -109,7 +109,7 @@ public class MakarManager {
                             result.set(timeInfo);
                         }
                     } catch (GeneralException e) {
-                        e.printStackTrace();
+                        throw new GeneralException(ErrorStatus.FAILURE_MAKAR_TIME);
                     }
                 });
 
@@ -159,7 +159,7 @@ public class MakarManager {
             allOf.get();
         } catch (InterruptedException | ExecutionException e) {
             Thread.currentThread().interrupt();
-            e.printStackTrace();
+            throw new GeneralException(ErrorStatus.FAILURE_ASYNC_TASK);
         }
     }
 
@@ -209,7 +209,7 @@ public class MakarManager {
         } else if (wayCode == DOWNTOWN) {
             return ordList.getDown().getTime();
         } else {
-            throw new IllegalArgumentException("Invalid wayCode: " + wayCode);
+            throw new GeneralException(ErrorStatus.NOT_FOUND_LINE_MAP);
         }
     }
 

@@ -22,7 +22,6 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -340,10 +339,14 @@ public class DataManager {
         }
     }
 
-    private Sheet readExcelFile(String path) throws IOException {
-        ClassPathResource classPathResource = new ClassPathResource(path);
-        InputStream inputStream = classPathResource.getInputStream();
-        Workbook workbook = new XSSFWorkbook(inputStream);
-        return workbook.getSheetAt(0);
+    private Sheet readExcelFile(String path) {
+        try {
+            ClassPathResource classPathResource = new ClassPathResource(path);
+            InputStream inputStream = classPathResource.getInputStream();
+            Workbook workbook = new XSSFWorkbook(inputStream);
+            return workbook.getSheetAt(0);
+        } catch (Exception e){
+            throw new GeneralException(ErrorStatus.FAILURE_READ_EXCEL_FILE);
+        }
     }
 }
