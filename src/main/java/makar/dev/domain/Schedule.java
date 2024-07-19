@@ -27,4 +27,8 @@ public class Schedule {
 
     @Column(nullable = false)
     private int totalTime; //전체 소요시간
+
+    public void setRoute(Route route){
+        this.route = route;
+    }
 }

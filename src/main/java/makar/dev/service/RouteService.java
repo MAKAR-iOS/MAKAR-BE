@@ -13,6 +13,7 @@ import makar.dev.repository.RouteRepository;
 import makar.dev.repository.StationRepository;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class RouteService {
     private final RouteManager routeManager;
 
     // 경로 리스트 검색
-    public RouteResponse.SearchRouteDto searchRoute(RouteRequest.SearchRouteDto searchRouteDto){
+    public RouteResponse.SearchRouteDto searchRoute(RouteRequest.SearchRouteDto searchRouteDto) throws IOException {
         Station sourceStation = findStation(searchRouteDto.getSourceStationName(), searchRouteDto.getSourceLineNum());
         Station destinationStation = findStation(searchRouteDto.getDestinationStationName(), searchRouteDto.getDestinationLineNum());
 

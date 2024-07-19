@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/route")
@@ -18,7 +20,7 @@ public class RouteController {
 
     // 경로 리스트 조회
     @GetMapping()
-    public ApiResponse searchRoute(@RequestBody RouteRequest.SearchRouteDto searchRouteDto){
+    public ApiResponse searchRoute(@RequestBody RouteRequest.SearchRouteDto searchRouteDto) throws IOException {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(searchRouteDto));
     }
 

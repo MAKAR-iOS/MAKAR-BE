@@ -15,16 +15,16 @@ public class SubRoute {
     private Long subRouteId;
 
     @Column(nullable = false)
-    private String toStationName;
+    private String fromStationName; // 출발역
 
     @Column(nullable = false)
-    private String fromStationName;
-
-    @Column(nullable = false)
-    private int toStationCode;
+    private String toStationName; // 도착역
 
     @Column(nullable = false)
     private int fromStationCode;
+
+    @Column(nullable = false)
+    private int toStationCode;
 
     @Column(nullable = false)
     private int lineNum;
@@ -34,4 +34,10 @@ public class SubRoute {
 
     @Column(nullable = false)
     private int sectionTime;
+
+    private int transferTime; // 해당 루트 이후 환승시 소요 시간
+
+    public void setTransferTime(int transferTime){
+        this.transferTime = transferTime;
+    }
 }

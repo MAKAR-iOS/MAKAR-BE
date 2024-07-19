@@ -29,13 +29,14 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SubRouteDto {
-        private String startStationName;
-        private String endStationName;
-        private int startStationCode;
-        private int endStationCode;
+        private String fromStationName;
+        private String toStationName;
+        private int fromStationCode;
+        private int toStationCode;
         private int lineNum;
         private int wayCode;
         private int sectionTime;
+        private int transferTime;
     }
 
     @Data @Builder
