@@ -34,4 +34,13 @@ public class User {
 
     @OneToMany(cascade = CascadeType.ALL)
     private List<Route> favoriteRouteList; //즐겨찾는 경로 리스트
+
+    public User(String userName){
+        this.userName = userName;
+    }
+
+    public void updateFavoriteHomeStation(Station station){this.favoriteHomeStation = station;}
+    public void updateFavoriteSchoolStation(Station station){this.favoriteSchoolStation = station;}
+    public boolean isFavoriteHomeStationExist(){return this.favoriteHomeStation != null;}
+    public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
 }

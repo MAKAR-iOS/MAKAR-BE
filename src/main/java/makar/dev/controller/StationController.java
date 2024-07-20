@@ -29,6 +29,26 @@ public class StationController {
     @PatchMapping("/detail")
     public ApiResponse updateStationDetail(@RequestParam(required = true, value = "q") String stationName, @RequestParam(required = true, value = "line") String lineNum){
         return ApiResponse.SuccessResponse(SuccessStatus._STATION_DETAIL_PATCH, stationService.updateStationDetail(stationName, lineNum));
+
+    @PatchMapping("/favorite/home")
+    public ApiResponse updateFavoriteHomeStation(@RequestBody StationRequest.FavoriteStationDto favoriteStationDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_HOME_STATION_PATCH, stationService.updateFavoriteHomeStation(favoriteStationDto));
+    }
+
+    @PatchMapping("/favorite/school")
+    public ApiResponse updateFavoriteSchoolStation(@RequestBody StationRequest.FavoriteStationDto favoriteStationDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_SCHOOL_STATION_PATCH, stationService.updateFavoriteSchoolStation(favoriteStationDto));
+    }
+
+    @GetMapping("/favorite/home/{userId}")
+    public ApiResponse getFavoriteHomeStation(@PathVariable(name = "userId") Long userId){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_HOME_STATION_GET, stationService.getFavoriteHomeStation(userId));
+    }
+
+    @GetMapping("/favorite/school/{userId}")
+    public ApiResponse getFavoriteSchoolStation(@PathVariable(name = "userId") Long userId){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_SCHOOL_STATION_GET, stationService.getFavoriteSchoolStation(userId));
+
     }
 
 
