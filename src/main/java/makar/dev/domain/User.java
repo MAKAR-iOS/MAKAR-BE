@@ -41,4 +41,6 @@ public class User {
 
     public void updateFavoriteHomeStation(Station station){this.favoriteHomeStation = station;}
     public void updateFavoriteSchoolStation(Station station){this.favoriteSchoolStation = station;}
+    public boolean isFavoriteHomeStationExist(){return this.favoriteHomeStation != null;}
+    public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
 }

@@ -11,6 +11,8 @@ public enum SuccessStatus {
 
     _STATION_GET(HttpStatus.OK,200, "역 검색이 완료되었습니다"),
     _ROUTE_LIST_GET(HttpStatus.OK, 200, "경로 리스트 검색이 완료되었습니다."),
+    _FAVORITE_HOME_STATION_GET(HttpStatus.OK, 200, "즐겨찾는 역(집) 조회가 완료되었습니다."),
+    _FAVORITE_SCHOOL_STATION_GET(HttpStatus.OK, 200, "즐겨찾는 역(학교) 조회가 완료되었습니다."),
     _FAVORITE_HOME_STATION_PATCH(HttpStatus.OK, 200, "즐겨찾는 역(집) 업데이트가 완료되었습니다."),
     _FAVORITE_SCHOOL_STATION_PATCH(HttpStatus.OK, 200, "즐겨찾는 역(학교) 업데이트가 완료되었습니다.");
 

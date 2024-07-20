@@ -22,6 +22,7 @@ public class StationService {
     private final StationRepository stationRepository;
     private final UserRepository userRepository;
 
+    // 역 검색
     public StationResponse.SearchDto searchStation(String param){
         List<Station> stationList = stationRepository.findByStationNameContaining(param);
         return StationConverter.toSearchDto(stationList);
@@ -42,6 +43,28 @@ public class StationService {
         User user = findById(favoriteStationDto.getUserId());
         Station station = findByStationNameAndOdsayLaneType(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
         user.updateFavoriteSchoolStation(station);
+        return StationConverter.toStationDto(station);
+    }
+
+    // 즐겨찾는 역(집) 조회
+    public StationResponse.StationDto getFavoriteHomeStation(Long userId){
+        User user = findById(userId);
+
+        if (!user.isFavoriteHomeStationExist())
+            throw new GeneralException(ErrorStatus.NOT_FOUND_FAVORITE_STATION);
+
+        Station station = user.getFavoriteHomeStation();
+        return StationConverter.toStationDto(station);
+    }
+
+    // 즐겨찾는 역(학교) 조회
+    public StationResponse.StationDto getFavoriteSchoolStation(Long userId){
+        User user = findById(userId);
+
+        if (!user.isFavoriteSchoolStationExist())
+            throw new GeneralException(ErrorStatus.NOT_FOUND_FAVORITE_STATION);
+
+        Station station = user.getFavoriteSchoolStation();
         return StationConverter.toStationDto(station);
     }
 

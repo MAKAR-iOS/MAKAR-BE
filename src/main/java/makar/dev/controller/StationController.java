@@ -28,5 +28,15 @@ public class StationController {
         return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_SCHOOL_STATION_PATCH, stationService.updateFavoriteSchoolStation(favoriteStationDto));
     }
 
+    @GetMapping("/favorite/home/{userId}")
+    public ApiResponse getFavoriteHomeStation(@PathVariable(name = "userId") Long userId){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_HOME_STATION_GET, stationService.getFavoriteHomeStation(userId));
+    }
+
+    @GetMapping("/favorite/school/{userId}")
+    public ApiResponse getFavoriteSchoolStation(@PathVariable(name = "userId") Long userId){
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_SCHOOL_STATION_GET, stationService.getFavoriteSchoolStation(userId));
+    }
+
 
 }
