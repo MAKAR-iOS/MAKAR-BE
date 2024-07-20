@@ -12,7 +12,6 @@ import makar.dev.dto.request.RouteRequest;
 import makar.dev.dto.response.RouteResponse;
 import makar.dev.manager.APIManager;
 import makar.dev.manager.MakarManager;
-import makar.dev.repository.LineMapRepository;
 import makar.dev.repository.RouteRepository;
 import makar.dev.repository.ScheduleRepository;
 import makar.dev.repository.StationRepository;
@@ -181,7 +180,7 @@ public class RouteService {
 
     // 도착시간 구하기
     private String getDestinationTime(String sourceTime, int totalTime) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy");
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
         Calendar calendar = Calendar.getInstance();
 
         try {
