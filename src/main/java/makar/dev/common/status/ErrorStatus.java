@@ -22,6 +22,7 @@ public enum ErrorStatus {
      */
     INVALID_API_KEY(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 API Key입니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다."),
+    INVALID_SOURCE_TIME_FORMAT(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 막차 시간 형식으로 인해 도착 시간 계산 중 오류가 발생했습니다."),
 
     /**
      * Code : 404
