@@ -16,3 +16,4 @@ public class GeneralExceptionAdvice extends ResponseEntityExceptionHandler {
         return ApiResponse.FailureResponse(e.getErrorStatus());
     }
 }
+

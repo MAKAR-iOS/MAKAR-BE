@@ -1,5 +1,6 @@
 package makar.dev.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
@@ -16,10 +17,8 @@ import makar.dev.repository.ScheduleRepository;
 import makar.dev.repository.StationRepository;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.StringTokenizer;
+import java.text.SimpleDateFormat;
+import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Matcher;
@@ -66,6 +65,11 @@ public class RouteService {
             }
 
             List<SubRoute> subRouteList = createSubRoutes(path);
+
+            for (SubRoute subRoute : subRouteList){
+                System.out.println("SubRoute : "+subRoute.toString());
+            }
+
             Schedule schedule = createSchedule(subRouteList);
 
             // route 생성
@@ -96,15 +100,16 @@ public class RouteService {
         return subRouteList;
     }
 
-    private Schedule createSchedule(List<SubRoute> subRouteList) {
+    @Transactional
+    public Schedule createSchedule(List<SubRoute> subRouteList) {
         //환승소요시간을 포함해서 전체소요시간 구하기
         int totalTime = getTransferTimeInRoute(subRouteList);
 
         //막차시간 구하기
         String sourceTime = getMakarTime(subRouteList);
+        String destinationTime = getDestinationTime(sourceTime, totalTime);
 
-        // TODO: destinationTime
-        Schedule schedule = ScheduleConverter.toSchedule(sourceTime, "", totalTime);
+        Schedule schedule = ScheduleConverter.toSchedule(sourceTime, destinationTime, totalTime);
         scheduleRepository.save(schedule);
         return schedule;
     }
@@ -137,7 +142,7 @@ public class RouteService {
     //환승소요시간을 포함해서 전체소요시간 구하기
     private int getTransferTimeInRoute(List<SubRoute> subRouteList) {
         int totalTime = 0;
-        int transitCount = subRouteList.size() - 1;
+        int transitCount = subRouteList.size();
 
         for (int i = 0; i < transitCount; i++) {
             SubRoute subRoute = subRouteList.get(i);
@@ -171,6 +176,21 @@ public class RouteService {
 
             Calendar takingTime = makarManager.computeMakarTime(subRouteList, dayOfWeek);
             return takingTime.getTime().toString();
+    }
+
+    // 도착시간 구하기
+    private String getDestinationTime(String sourceTime, int totalTime) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ENGLISH);
+        Calendar calendar = Calendar.getInstance();
+
+        try {
+            Date date = sdf.parse(sourceTime);
+            calendar.setTime(date);
+            calendar.add(Calendar.MINUTE, totalTime); // totalTime을 분 단위로 더함
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.INVALID_SOURCE_TIME_FORMAT);
+        }
+        return sdf.format(calendar.getTime());
     }
 
 }
