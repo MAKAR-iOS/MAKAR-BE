@@ -1,6 +1,7 @@
 package makar.dev.service;
 
 import lombok.RequiredArgsConstructor;
+import makar.dev.domain.User;
 import makar.dev.manager.DataManager;
 import makar.dev.repository.UserRepository;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,11 @@ public class UserService {
          // parse transfer information
 //        dataManager.readAndSaveTransferInfo();
 //        dataManager.saveReverseTransferInfo();
+    }
+
+    public void tmpCreateUser(String userName){
+        User user = new User(userName);
+        userRepository.save(user);
     }
 
 

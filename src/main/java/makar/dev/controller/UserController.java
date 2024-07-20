@@ -4,9 +4,7 @@ import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
 import makar.dev.common.status.SuccessStatus;
 import makar.dev.service.UserService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -19,5 +17,12 @@ public class UserController {
         userService.initDatabase();
         return ApiResponse.SuccessResponse(SuccessStatus._OK);
     }
+
+    @PostMapping("/tmp/create")
+    ApiResponse tempCreateUser(@RequestParam(value = "name")String name){
+        userService.tmpCreateUser(name);
+        return ApiResponse.SuccessResponse(SuccessStatus._OK);
+    }
+
 
 }
