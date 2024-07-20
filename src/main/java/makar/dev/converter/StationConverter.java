@@ -1,5 +1,7 @@
 package makar.dev.converter;
 
+import makar.dev.common.exception.GeneralException;
+import makar.dev.common.status.ErrorStatus;
 import makar.dev.domain.Station;
 import makar.dev.dto.response.StationResponse;
 
@@ -30,5 +32,22 @@ public class StationConverter {
         return StationResponse.SearchDto.builder()
                 .stationDtoList(stationDtoList)
                 .build();
+    }
+
+    public static StationResponse.StationDetailDto toStationDetailDto(Station station){
+        try {
+            return StationResponse.StationDetailDto.builder()
+                    .stationName(station.getStationName())
+                    .stationCode(station.getStationCode())
+                    .lineNum(station.getLineNum())
+                    .railOpr(station.getRailOpr())
+                    .odsayStationId(station.getOdsayStationID())
+                    .odsayLaneType(station.getOdsayLaneType())
+                    .x(station.getX())
+                    .y(station.getY())
+                    .build();
+        } catch (Exception e){
+            throw new GeneralException(ErrorStatus.NOT_FOUND_STATION_DETAIL);
+        }
     }
 }

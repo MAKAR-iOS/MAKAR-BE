@@ -24,4 +24,20 @@ public class StationResponse {
     public static class SearchDto {
         private List<StationDto> stationDtoList;
     }
+
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class StationDetailDto {
+        private String stationName;
+        private String stationCode;
+        private String lineNum;
+        private String railOpr;
+        private int odsayStationId;
+        private int odsayLaneType;
+        private double x;
+        private double y;
+    }
+
 }

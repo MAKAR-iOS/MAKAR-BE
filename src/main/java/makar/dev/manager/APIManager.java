@@ -40,6 +40,7 @@ public class APIManager {
         Map<String, String> params = new HashMap<>();
         params.put("lang", String.valueOf(0));
         params.put("stationName", String.valueOf(stationName));
+        params.put("stationClass", String.valueOf(2));
 
         try {
             String stationDataResponse = makeApiRequest(endpoint, params);

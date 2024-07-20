@@ -27,6 +27,7 @@ public enum ErrorStatus {
      * Code : 404
      */
     NOT_FOUND_STATION(HttpStatus.NOT_FOUND, 404, "존재하지 않는 역 정보입니다."),
+    NOT_FOUND_STATION_DETAIL(HttpStatus.NOT_FOUND, 404, "해당 역의 세부 정보가 존재하지 않습니다."),
     NOT_FOUND_LINE_MAP(HttpStatus.NOT_FOUND, 404, "존재하지 않는 지하철 노선도 정보입니다."),
     NOT_FOUND_LINE_STATION(HttpStatus.NOT_FOUND, 404, "지하철 노선도 역 리스트가 존재하지 않습니다."),
 
