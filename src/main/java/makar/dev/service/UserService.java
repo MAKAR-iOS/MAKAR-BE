@@ -1,9 +1,13 @@
 package makar.dev.service;
 
 import lombok.RequiredArgsConstructor;
+import makar.dev.domain.User;
 import makar.dev.manager.DataManager;
 import makar.dev.repository.UserRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +41,21 @@ public class UserService {
 //        dataManager.saveReverseTransferInfo();
     }
 
+    public Optional<User> getOptionalUserById(String id) {
+        return userRepository.findById(id);
+    }
 
+    @Transactional
+    public User createUser(String id, String password, String email, String username) {
+        User user = User.builder()
+                .id(id)
+                .password(password)
+                .email(email)
+                .username(username)
+                .build();
+
+        user = userRepository.save(user);
+
+        return user;
+    }
 }
