@@ -34,9 +34,9 @@ import java.util.regex.Pattern;
 @Transactional
 public class DataManager {
     private final StationRepository stationRepository;
-    private final OdsayClient odsayClient;
     private final LineMapRepository lineMapRepository;
     private final TransferRepository transferRepository;
+    private final APIManager apiManager;
 
     // station information save in database
     public void readAndSaveStationInfo() {
@@ -69,8 +69,7 @@ public class DataManager {
                 Row row = sheet.getRow(i);
                 if (row != null) {
                     String stationName = row.getCell(0).getStringCellValue();
-                    String result = odsayClient.searchStation(stationName);
-                    List<OdsayStation.Station> stations = odsayClient.parseStationDataResponse(result);
+                    List<OdsayStation.Station> stations = apiManager.searchStation(stationName);
 
                     if (stations.isEmpty()) {
                         continue;

@@ -1,11 +1,13 @@
 package makar.dev.manager;
 
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
+import makar.dev.domain.data.OdsayStation;
 import makar.dev.domain.data.RouteSearchResponse;
 import makar.dev.domain.data.SubwaySchedule;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +19,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Component
@@ -27,6 +31,24 @@ public class APIManager {
     private String apiKey;
     private final ObjectMapper objectMapper;
 
+    //대중교통 정류장 찾기 api호출
+    public List<OdsayStation.Station> searchStation(String stationName) {
+        if (apiKey == null || apiKey.isEmpty()) {
+            throw new GeneralException(ErrorStatus.INVALID_API_KEY);
+        }
+        String endpoint = "https://api.odsay.com/v1/api/searchStation";
+        Map<String, String> params = new HashMap<>();
+        params.put("lang", String.valueOf(0));
+        params.put("stationName", String.valueOf(stationName));
+        params.put("stationClass", String.valueOf(2));
+
+        try {
+            String stationDataResponse = makeApiRequest(endpoint, params);
+            return parseStationDataResponse(stationDataResponse);
+        } catch (Exception e) {
+            throw new GeneralException(ErrorStatus.FAILURE_API_REQUEST);
+        }
+    }
 
     //대중교통 길찾기 api 호출
     public RouteSearchResponse requestRoute(double sourceX, double sourceY, double destinationX, double destinationY) {
@@ -41,7 +63,7 @@ public class APIManager {
         try {
             String routeSearchResponse = makeApiRequest(endpoint, params);
             return parseRouteSearchResponse(routeSearchResponse);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new GeneralException(ErrorStatus.FAILURE_API_REQUEST);
         }
     }
@@ -58,7 +80,7 @@ public class APIManager {
         try {
             String subwayScheduleResponse = makeApiRequest(endpoint, params);
             return parseSubwayScheduleResponse(subwayScheduleResponse);
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new GeneralException(ErrorStatus.INVALID_REQUEST);
         }
     }
@@ -88,8 +110,18 @@ public class APIManager {
             } finally {
                 conn.disconnect();
             }
-        } catch (Exception e){
+        } catch (Exception e) {
             throw new GeneralException(ErrorStatus.FAILURE_API_REQUEST);
+        }
+    }
+
+    private List<OdsayStation.Station> parseStationDataResponse(String jsonResponse) {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            OdsayStation result = objectMapper.readValue(jsonResponse, OdsayStation.class);
+            return result.getResult().getStation();
+        } catch (JsonProcessingException e) {
+            return Collections.emptyList();
         }
     }
 

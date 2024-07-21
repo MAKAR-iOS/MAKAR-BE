@@ -1,5 +1,6 @@
 package makar.dev.manager;
 
+
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
@@ -9,7 +10,9 @@ import makar.dev.domain.SubRoute;
 import makar.dev.domain.data.SubwaySchedule;
 import makar.dev.domain.data.TimeInfo;
 import makar.dev.repository.LineMapRepository;
-import org.springframework.stereotype.Component;
+import org.springframework.scheduling.annotation.EnableAsync;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -20,15 +23,20 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-@Component
+@EnableAsync
+@Service
 @RequiredArgsConstructor
 public class MakarManager {
+    AtomicBoolean canGoInSubway = new AtomicBoolean(false);
+    AtomicReference<TimeInfo> resultTimeInfo = new AtomicReference<>();
+    AtomicReference<Calendar> resultCalender = new AtomicReference<>();
+
+
     private static final int UPTOWN = 1;  //상행
     private static final int DOWNTOWN = 2; //하행
 
     private final APIManager apiManager;
     private final LineMapRepository lineMapRepository;
-
 
     //경로 정보와 지하철 시간표를 활용하여 막차 시간을 계산한다.
     public Calendar computeMakarTime(List<SubRoute> subRouteList, int dayOfWeek) {
@@ -44,86 +52,91 @@ public class MakarManager {
 
             //마지막 서브 경로 or 단일 서브 경로인 경우
             if (i == subRouteList.size() - 1) {
-                takingTime = computeLastMakarTime(dayOfWeek, subwaySchedule, lastSubRoute.getLineNum(), lastSubRoute.getWayCode(), lastSubRoute.getFromStationCode(), lastSubRoute.getToStationCode());
+                computeLastMakarTime(dayOfWeek, subwaySchedule, lastSubRoute.getLineNum(), lastSubRoute.getWayCode(), lastSubRoute.getFromStationCode(), lastSubRoute.getToStationCode());
+                takingTime = resultCalender.get();
             } else {
                 int sectionTime = lastSubRoute.getSectionTime();
                 sectionTime += lastSubRoute.getTransferTime();
                 takingTime.add(Calendar.MINUTE, -sectionTime);
 
                 // 환승시간을 포함하여 이후 서브 경로의 막차 시간 구하기
-                takingTime = computeTransferMakarTime(takingTime, dayOfWeek, subwaySchedule, lastSubRoute.getLineNum(), lastSubRoute.getWayCode(), lastSubRoute.getFromStationCode(), lastSubRoute.getToStationCode());
+                computeTransferMakarTime(takingTime, dayOfWeek, subwaySchedule, lastSubRoute.getLineNum(), lastSubRoute.getWayCode(), lastSubRoute.getFromStationCode(), lastSubRoute.getToStationCode());
+                takingTime = resultCalender.get();
             }
-
             makarTimes.add(0, takingTime.getTime());
         }
         return takingTime;
     }
 
     // 환승이 없는 경우 막차 시간 구하기
-    public Calendar computeLastMakarTime(int dayOfWeek, SubwaySchedule subwaySchedule, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
+    private void computeLastMakarTime(int dayOfWeek, SubwaySchedule subwaySchedule, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
         SubwaySchedule.OrdList ordList = getOrdListByDayOfWeek(dayOfWeek, subwaySchedule);
         List<SubwaySchedule.OrdList.TimeDirection.TimeData> time = getTimeByWayCode(wayCode, ordList);
-        return findMakarTime(time, null, odsayLaneType, wayCode, fromStationID, toStationID);
+        findMakarTime(time, null, odsayLaneType, wayCode, fromStationID, toStationID);
     }
 
     // 환승이 있는 경우 막차 시간 구하기
-    public Calendar computeTransferMakarTime(Calendar takingTime, int dayOfWeek, SubwaySchedule subwaySchedule, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
+    private void computeTransferMakarTime(Calendar takingTime, int dayOfWeek, SubwaySchedule subwaySchedule, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
         SubwaySchedule.OrdList ordList = getOrdListByDayOfWeek(dayOfWeek, subwaySchedule);
         List<SubwaySchedule.OrdList.TimeDirection.TimeData> time = getTimeByWayCode(wayCode, ordList);
-        return findMakarTime(time, takingTime, odsayLaneType, wayCode, fromStationID, toStationID);
+        findMakarTime(time, takingTime, odsayLaneType, wayCode, fromStationID, toStationID);
     }
 
-    private Calendar findMakarTime(List<SubwaySchedule.OrdList.TimeDirection.TimeData> time, Calendar takingTime, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
+    @Transactional
+    public void findMakarTime(List<SubwaySchedule.OrdList.TimeDirection.TimeData> time, Calendar takingTime, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
+        List<CompletableFuture<Void>> tasks = new ArrayList<>();
+
         for (int i = time.size() - 1; i >= 0; i--) {
+            if (canGoInSubway.get())
+                break;
+
             SubwaySchedule.OrdList.TimeDirection.TimeData timeData = time.get(i);
 
-            if (takingTime != null && isBeforeTakingHour(timeData, takingTime)) {
+            if (takingTime != null && isBeforeTakingHour(timeData, takingTime))
                 continue;
-            }
 
             List<TimeInfo> timeInfos = TimeInfo.parseTimeString(timeData.getList());
-            AtomicBoolean canGoInSubway = new AtomicBoolean(false);
-            AtomicReference<TimeInfo> result = new AtomicReference<>();
-            List<CompletableFuture<Void>> tasks = new ArrayList<>();
 
             for (int j = timeInfos.size() - 1; j >= 0; j--) {
                 TimeInfo timeInfo = timeInfos.get(j);
 
-                if (takingTime != null && isBeforeTakingTime(timeData, timeInfo, takingTime)) {
+                if (takingTime != null && isBeforeTakingTime(timeData, timeInfo, takingTime))
                     continue;
-                }
 
-                CompletableFuture<Void> task = CompletableFuture.runAsync(() -> {
-                    try {
-                        LineMap lineMap = lineMapRepository.findByLineNum(odsayLaneType)
-                                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_LINE_MAP));
+                List<LineMap> lineMapList = lineMapRepository.findByLineNum(odsayLaneType);
+                CompletableFuture<Void> task = new CompletableFuture<>();
 
-                        List<LineStation> stationList = getStationListByWayCode(lineMap, wayCode);
-                        int startIndex = getStationIndex(stationList, fromStationID);
-                        int endIndex = getStationIndex(stationList, toStationID);
-                        int terminalIndex = getTerminalIndex(stationList, timeInfo.getTerminalStation());
+                for (LineMap lineMap : lineMapList) {
+                    if (canGoInSubway.get())
+                        break;
 
-                        if (startIndex < endIndex && endIndex <= terminalIndex) {
-                            System.out.println("MAKAR: 노선도 인덱스 확인: " + timeInfo.getMinute() + "분에 출발역(" + startIndex + ") 도착역(" + endIndex + ") 종착역(" + terminalIndex + ")");
-                            canGoInSubway.set(true);
-                            result.set(timeInfo);
-                        }
-                    } catch (GeneralException e) {
-                        throw new GeneralException(ErrorStatus.FAILURE_MAKAR_TIME);
+                    List<LineStation> stationList = getStationListByWayCode(lineMap, wayCode);
+
+                    int startIndex = getStationIndex(stationList, fromStationID);
+                    int endIndex = getStationIndex(stationList, toStationID);
+                    int terminalIndex = getTerminalIndex(stationList, timeInfo.getTerminalStation());
+
+                    System.out.println("TimeInfo: 노선도 인덱스 확인: " + timeInfo.getMinute() + "분에 출발역(" + startIndex + ") 도착역(" + endIndex + ") 종착역(" + terminalIndex + ")");
+
+                    if (startIndex < endIndex && endIndex <= terminalIndex) {
+                        canGoInSubway.set(true);
+                        resultTimeInfo.set(timeInfo);
+                        task.complete(null);
+                        break;
                     }
-                });
-
+                }
+                task.complete(null);
                 tasks.add(task);
             }
 
-            waitForTasks(tasks);
+            waitForTasks(tasks, canGoInSubway);
 
             if (canGoInSubway.get()) {
-                return computeMakarCalendar(timeData.getIdx(), result.get().getMinute());
+                resultCalender.set(computeMakarCalendar(timeData.getIdx(), resultTimeInfo.get().getMinute()));
             }
         }
-        return null;
     }
+
 
     private List<LineStation> getStationListByWayCode(LineMap lineMap, int wayCode) {
         if (wayCode == UPTOWN) {
@@ -153,13 +166,16 @@ public class MakarManager {
         return -1;
     }
 
-    private void waitForTasks(List<CompletableFuture<Void>> tasks) {
-        CompletableFuture<Void> allOf = CompletableFuture.allOf(tasks.toArray(new CompletableFuture[0]));
-        try {
-            allOf.get();
-        } catch (InterruptedException | ExecutionException e) {
-            Thread.currentThread().interrupt();
-            throw new GeneralException(ErrorStatus.FAILURE_ASYNC_TASK);
+    private void waitForTasks(List<CompletableFuture<Void>> tasks, AtomicBoolean canGoInSubway) {
+        for (CompletableFuture<Void> task : tasks) {
+            if (canGoInSubway.get()) {
+                break;
+            }
+            try {
+                task.get();
+            } catch (InterruptedException | ExecutionException e) {
+                Thread.currentThread().interrupt();
+            }
         }
     }
 
@@ -188,7 +204,6 @@ public class MakarManager {
 
         return makarCalendar;
     }
-
 
     //요일에 맞는 시간표 가져오기
     private SubwaySchedule.OrdList getOrdListByDayOfWeek(int dayOfWeek, SubwaySchedule subwaySchedule) {

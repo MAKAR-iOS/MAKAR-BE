@@ -41,6 +41,11 @@ public class UserService {
 //        dataManager.saveReverseTransferInfo();
     }
 
+    public void tmpCreateUser(String userName){
+        User user = new User(userName);
+        userRepository.save(user);
+    }
+
     public Optional<User> getOptionalUserById(String id) {
         return userRepository.findById(id);
     }
