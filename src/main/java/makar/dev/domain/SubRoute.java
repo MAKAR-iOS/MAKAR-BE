@@ -37,6 +37,10 @@ public class SubRoute {
 
     private int transferTime; // 해당 루트 이후 환승시 소요 시간
 
+    @ManyToOne
+    @JoinColumn(name = "route_id")
+    private Route route;
+
     public void setTransferTime(int transferTime){
         this.transferTime = transferTime;
     }
