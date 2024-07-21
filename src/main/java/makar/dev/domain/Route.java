@@ -39,4 +39,8 @@ public class Route {
     @Column(nullable = false)
     private List<SubRoute> subRouteList;
 
+    public void updateSchedule(Schedule schedule){
+        this.schedule = schedule;
+    }
+
 }

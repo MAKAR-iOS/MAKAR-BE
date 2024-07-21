@@ -27,6 +27,7 @@ public class RouteConverter {
                 .toList();
 
         return RouteResponse.RouteDto.builder()
+                .routeId(route.getRouteId())
                 .sourceStationName(route.getSourceStation().getStationName())
                 .sourceLineNum(route.getSourceStation().getOdsayLaneType())
                 .destinationStationName(route.getDestinationStation().getStationName())
@@ -56,10 +57,7 @@ public class RouteConverter {
         return RouteResponse.SubRouteDto.builder()
                 .fromStationName(subRoute.getFromStationName())
                 .toStationName(subRoute.getToStationName())
-                .fromStationCode(subRoute.getFromStationCode())
-                .toStationCode(subRoute.getToStationCode())
                 .lineNum(subRoute.getLineNum())
-                .wayCode(subRoute.getWayCode())
                 .sectionTime(subRoute.getSectionTime())
                 .transferTime(subRoute.getTransferTime())
                 .build();

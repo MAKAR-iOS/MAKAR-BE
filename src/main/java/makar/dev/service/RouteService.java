@@ -50,7 +50,28 @@ public class RouteService {
     }
 
     // 경로 리스트 구하기
-    private List<Route> getRoutes(Station sourceStation, Station destinationStation){
+    private List<Route> getRoutes(Station sourceStation, Station destinationStation) {
+        List<Route> routeList = routeRepository.findBySourceStationAndDestinationStation(sourceStation, destinationStation);
+
+        // 경로 table이 있는 경우
+        if (!routeList.isEmpty()) {
+            updateSchedules(routeList);
+            return routeList;
+        }
+
+        return fetchAndSaveRoutesFromAPI(sourceStation, destinationStation);
+    }
+
+    private void updateSchedules(List<Route> routeList) {
+        for (Route route : routeList) {
+            Schedule schedule = createSchedule(route.getSubRouteList());
+            scheduleRepository.delete(route.getSchedule());
+            route.updateSchedule(schedule);
+            schedule.setRoute(route);
+        }
+    }
+
+    private List<Route> fetchAndSaveRoutesFromAPI(Station sourceStation, Station destinationStation) {
         RouteSearchResponse routeSearchResponse = apiManager.requestRoute(sourceStation.getX(), sourceStation.getY(), destinationStation.getX(), destinationStation.getY());
         List<Route> routes = new ArrayList<>();
         List<RouteSearchResponse.Path> paths = routeSearchResponse.getResult().getPath();
@@ -60,23 +81,14 @@ public class RouteService {
             RouteSearchResponse.Info pathInfo = path.getInfo();
 
             //1~9호선이 아닌 경로가 포함되어있는 경우 경로에서 제외
-            if (isNotSubwayLineOneToNine(pathInfo.getMabObj())) {
-                continue;
-            }
+            if (isNotSubwayLineOneToNine(pathInfo.getMabObj())) continue;
 
             List<SubRoute> subRouteList = createSubRoutes(path);
-
-            for (SubRoute subRoute : subRouteList){
-                System.out.println("SubRoute : "+subRoute.toString());
-            }
-
             Schedule schedule = createSchedule(subRouteList);
 
             // route 생성
-            Route route = RouteConverter.toRoute(sourceStation, destinationStation, schedule, pathInfo.getSubwayTransitCount(), subRouteList);
+            Route route = RouteConverter.toRoute(sourceStation, destinationStation, schedule, path.getInfo().getSubwayTransitCount(), subRouteList);
             routeRepository.save(route);
-
-            // schedule 연관관계 설정
             schedule.setRoute(route);
             routes.add(route);
         }

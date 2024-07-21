@@ -27,8 +27,9 @@ public class StationController {
 
     // 역 세부 정보 수정
     @PatchMapping("/detail")
-    public ApiResponse updateStationDetail(@RequestParam(required = true, value = "q") String stationName, @RequestParam(required = true, value = "line") String lineNum){
+    public ApiResponse updateStationDetail(@RequestParam(required = true, value = "q") String stationName, @RequestParam(required = true, value = "line") String lineNum) {
         return ApiResponse.SuccessResponse(SuccessStatus._STATION_DETAIL_PATCH, stationService.updateStationDetail(stationName, lineNum));
+    }
 
     @PatchMapping("/favorite/home")
     public ApiResponse updateFavoriteHomeStation(@RequestBody StationRequest.FavoriteStationDto favoriteStationDto){

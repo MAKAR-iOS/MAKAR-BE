@@ -14,6 +14,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class RouteDto {
+        private Long routeId;
         private String sourceStationName;
         private int sourceLineNum;
         private String destinationStationName;
@@ -31,10 +32,7 @@ public class RouteResponse {
     public static class SubRouteDto {
         private String fromStationName;
         private String toStationName;
-        private int fromStationCode;
-        private int toStationCode;
         private int lineNum;
-        private int wayCode;
         private int sectionTime;
         private int transferTime;
     }
