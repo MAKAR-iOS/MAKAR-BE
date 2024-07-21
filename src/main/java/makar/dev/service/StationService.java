@@ -79,6 +79,7 @@ public class StationService {
         station.setX(odsayStation.getX());
         station.setY(odsayStation.getY());
         station.setOdsayLaneType(odsayStation.getType());
+    }
 
     // 즐겨찾는 역(집) 업데이트
     @Transactional
