@@ -46,6 +46,7 @@ public class RouteService {
     }
 
     // 경로 설정
+    @Transactional
     public RouteResponse.SetRouteDto setRoute(Long userId, Long routeId){
         User user = findUserById(userId);
         Route route = findRouteById(routeId);
@@ -66,6 +67,22 @@ public class RouteService {
         user.addNotiList(makarNoti);
         user.addNotiList(getOffNoti);
         return RouteConverter.toSetRouteDto(route, makarNoti, getOffNoti);
+    }
+
+    // 경로 삭제
+    @Transactional
+    public void deleteRoute(Long userId){
+        User user = findUserById(userId);
+        List<Noti> notiList = user.getNotiList();
+
+        // 설정된 경로가 없을 경우
+        if (notiList.isEmpty()){
+            throw new GeneralException(ErrorStatus.INVALID_DELETE_ROUTE);
+        }
+
+        // noti list 초기화
+        notiRepository.deleteAll(notiList);
+        user.getNotiList().clear();
     }
 
     private Station findStation(String name, int num){

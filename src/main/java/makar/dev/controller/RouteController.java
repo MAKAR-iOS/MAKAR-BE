@@ -26,4 +26,12 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(userId, routeId));
     }
 
+    // 경로 삭제
+    @DeleteMapping()
+    public ApiResponse deleteRoute(@RequestParam(value = "userId") Long userId){
+        routeService.deleteRoute(userId);
+        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_DELETE);
+    }
+
+
 }

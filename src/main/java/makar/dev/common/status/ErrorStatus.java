@@ -24,6 +24,7 @@ public enum ErrorStatus {
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다."),
     INVALID_SOURCE_TIME_FORMAT(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 막차 시간 형식으로 인해 도착 시간 계산 중 오류가 발생했습니다."),
     ALREADY_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "이미 설정된 경로가 존재합니다."),
+    INVALID_DELETE_ROUTE(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
 
     /**
      * Code : 404
