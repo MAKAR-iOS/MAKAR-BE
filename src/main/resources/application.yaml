@@ -1,0 +1,7 @@
+app:
+  jwt:
+    accessTokenValidMS: ${ACCESS_TOKEN_EXP}
+    refreshTokenValidMS: ${REFRESH_TOKEN_EXP}
+
+odsay:
+  api-key: ${ODSAY_API_KEY}
