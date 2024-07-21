@@ -20,4 +20,10 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(searchRouteDto));
     }
 
+    // 경로 설정
+    @PostMapping()
+    public ApiResponse setRoute(@RequestParam(value = "userId") Long userId, @RequestParam(value = "routeId") Long routeId){
+        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(userId, routeId));
+    }
+
 }

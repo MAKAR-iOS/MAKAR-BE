@@ -1,9 +1,6 @@
 package makar.dev.converter;
 
-import makar.dev.domain.Route;
-import makar.dev.domain.Schedule;
-import makar.dev.domain.Station;
-import makar.dev.domain.SubRoute;
+import makar.dev.domain.*;
 import makar.dev.domain.data.RouteSearchResponse;
 import makar.dev.dto.response.RouteResponse;
 
@@ -70,6 +67,25 @@ public class RouteConverter {
 
         return RouteResponse.SearchRouteDto.builder()
                 .routeDtoList(routeDtoList)
+                .build();
+    }
+
+    public static RouteResponse.SetRouteDto toSetRouteDto(Route route, Noti makarNoti, Noti getOffNoti){
+        List<RouteResponse.SubRouteDto> subRouteDtoList = route.getSubRouteList().stream()
+                .map(RouteConverter::toSubRouteDto)
+                .toList();
+        return RouteResponse.SetRouteDto.builder()
+                .routeId(route.getRouteId())
+                .sourceStationName(route.getSourceStation().getStationName())
+                .sourceLineNum(route.getSourceStation().getOdsayLaneType())
+                .destinationStationName(route.getDestinationStation().getStationName())
+                .destinationLineNum(route.getDestinationStation().getOdsayLaneType())
+                .sourceTime(route.getSchedule().getSourceTime())
+                .destinationTime(route.getSchedule().getDestinationTime())
+                .totalTime(route.getSchedule().getTotalTime())
+                .subRouteDtoList(subRouteDtoList)
+                .getOffMinute(makarNoti.getNoti_minute())
+                .getOffMinute(getOffNoti.getNoti_minute())
                 .build();
     }
 

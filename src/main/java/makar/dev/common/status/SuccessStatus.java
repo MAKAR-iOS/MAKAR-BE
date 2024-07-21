@@ -20,7 +20,8 @@ public enum SuccessStatus {
 
     // RouteController
     _ROUTE_LIST_GET(HttpStatus.OK, 200, "경로 리스트 검색이 완료되었습니다."),
-    _ROUTE_DELETE(HttpStatus.OK, 200, "경로 삭제가 완료되었습니다.");
+    _ROUTE_DELETE(HttpStatus.OK, 200, "경로 삭제가 완료되었습니다."),
+    _ROUTE_POST(HttpStatus.OK, 200, "경로 설정이 완료되었습니다.");
 
 
     private final HttpStatus httpStatus;

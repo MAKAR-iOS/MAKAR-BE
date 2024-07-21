@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
 import makar.dev.common.status.ErrorStatus;
+import makar.dev.converter.NotiConverter;
 import makar.dev.converter.RouteConverter;
 import makar.dev.converter.ScheduleConverter;
 import makar.dev.domain.*;
@@ -12,9 +13,7 @@ import makar.dev.dto.request.RouteRequest;
 import makar.dev.dto.response.RouteResponse;
 import makar.dev.manager.APIManager;
 import makar.dev.manager.MakarManager;
-import makar.dev.repository.RouteRepository;
-import makar.dev.repository.ScheduleRepository;
-import makar.dev.repository.StationRepository;
+import makar.dev.repository.*;
 import org.springframework.stereotype.Service;
 
 import java.text.SimpleDateFormat;
@@ -30,6 +29,8 @@ public class RouteService {
     private final RouteRepository routeRepository;
     private final StationRepository stationRepository;
     private final ScheduleRepository scheduleRepository;
+    private final UserRepository userRepository;
+    private final NotiRepository notiRepository;
     private final APIManager apiManager;
     private final MakarManager makarManager;
     private final TransferService transferService;
@@ -44,9 +45,42 @@ public class RouteService {
         return RouteConverter.toSearchRouteDto(routeList);
     }
 
+    // 경로 설정
+    public RouteResponse.SetRouteDto setRoute(Long userId, Long routeId){
+        User user = findUserById(userId);
+        Route route = findRouteById(routeId);
+
+        // 이미 경로가 지정되었을 경우
+        if (!user.getNotiList().isEmpty()){
+            throw new GeneralException(ErrorStatus.ALREADY_ROUTE_SET);
+        }
+
+        // 막차 Noti 생성
+        Noti makarNoti = NotiConverter.toMAKARNoti(route, user);
+        // 하차 Noti 생성
+        Noti getOffNoti = NotiConverter.toGetOffNoti(route, user);
+
+        notiRepository.save(makarNoti);
+        notiRepository.save(getOffNoti);
+
+        user.addNotiList(makarNoti);
+        user.addNotiList(getOffNoti);
+        return RouteConverter.toSetRouteDto(route, makarNoti, getOffNoti);
+    }
+
     private Station findStation(String name, int num){
         return stationRepository.findByStationNameAndOdsayLaneType(name, num)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
+    }
+
+    private User findUserById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
+    }
+
+    private Route findRouteById(Long routeId){
+        return routeRepository.findById(routeId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_ROUTE));
     }
 
     // 경로 리스트 구하기
