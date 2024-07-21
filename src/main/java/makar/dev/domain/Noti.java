@@ -2,13 +2,14 @@ package makar.dev.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import makar.dev.common.enums.Notification;
 
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
+@Getter @Builder
 @Entity
 public class Noti {
     @Id
@@ -16,7 +17,7 @@ public class Noti {
     @Column(name = "noti_id")
     private Long notiId;
 
-    @OneToOne(mappedBy = "noti", fetch = FetchType.LAZY)
+    @ManyToOne
     private Route route;
 
     @ManyToOne

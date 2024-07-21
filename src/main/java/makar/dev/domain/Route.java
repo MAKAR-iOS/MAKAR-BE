@@ -19,10 +19,6 @@ public class Route {
     private Long routeId;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "noti_id")
-    private Noti noti;
-
-    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "schedule_id")
     private Schedule schedule;
 
@@ -38,5 +34,9 @@ public class Route {
     @OneToMany(cascade = CascadeType.ALL)
     @Column(nullable = false)
     private List<SubRoute> subRouteList;
+
+    public void updateSchedule(Schedule schedule){
+        this.schedule = schedule;
+    }
 
 }
