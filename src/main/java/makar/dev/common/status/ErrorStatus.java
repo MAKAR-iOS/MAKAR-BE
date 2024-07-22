@@ -41,7 +41,9 @@ public enum ErrorStatus {
     /**
      * Code : 500
      */
-    FAILURE_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "데이터 초기화에 실패했습니다."),
+    FAILURE_STATION_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "역 데이터 초기화에 실패했습니다."),
+    FAILURE_LINEMAP_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "노선도 데이터 초기화에 실패했습니다."),
+    FAILURE_TRANSFER_DATA_INIT(HttpStatus.NOT_IMPLEMENTED, 500, "환승 데이터 초기화에 실패했습니다."),
     FAILURE_API_REQUEST(HttpStatus.NOT_IMPLEMENTED, 500, "API 호출 중 오류가 발생했습니다."),
     FAILURE_MAKAR_TIME(HttpStatus.NOT_IMPLEMENTED, 500, "막차 시간 계산 중 오류가 발생했습니다."),
     FAILURE_ASYNC_TASK(HttpStatus.NOT_IMPLEMENTED, 500, "비동기 작업 중 오류가 발생했습니다."),

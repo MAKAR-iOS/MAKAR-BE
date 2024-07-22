@@ -54,6 +54,9 @@ public class StationService {
             int findStationType = odsayStation.getType();
             String findLineNum = mapOdsayStationTypeToLineNum(findStationType);
 
+            if (findLineNum == null)
+                continue;
+
             if (findLineNum.equals(lineNum)) {
                 updateOdsayStationDataInEntity(station, odsayStation);
             }
