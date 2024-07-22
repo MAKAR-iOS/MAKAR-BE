@@ -36,9 +36,9 @@ public class RouteService {
     private final TransferService transferService;
 
     // 경로 리스트 검색
-    public RouteResponse.SearchRouteDto searchRoute(RouteRequest.SearchRouteDto searchRouteDto) {
-        Station sourceStation = findStation(searchRouteDto.getSourceStationName(), searchRouteDto.getSourceLineNum());
-        Station destinationStation = findStation(searchRouteDto.getDestinationStationName(), searchRouteDto.getDestinationLineNum());
+    public RouteResponse.SearchRouteDto searchRoute(String fromStationName, int fromLineNum, String toStationName, int toLineNum) {
+        Station sourceStation = findStation(fromStationName, fromLineNum);
+        Station destinationStation = findStation(toStationName, toLineNum);
 
         // search route
         List<Route> routeList = getRoutes(sourceStation, destinationStation);
