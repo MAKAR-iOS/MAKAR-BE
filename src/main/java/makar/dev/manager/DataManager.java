@@ -56,7 +56,7 @@ public class DataManager {
                 }
             }
         } catch (Exception e) {
-            throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+            throw new GeneralException(ErrorStatus.FAILURE_STATION_DATA_INIT);
         }
     }
 
@@ -78,7 +78,7 @@ public class DataManager {
                 }
             }
         } catch (Exception e) {
-            throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+            throw new GeneralException(ErrorStatus.FAILURE_STATION_DATA_INIT);
         }
     }
 
@@ -173,7 +173,7 @@ public class DataManager {
             lineMapRepository.save(lineMap);
 
         } catch (Exception e) {
-            throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+            throw new GeneralException(ErrorStatus.FAILURE_LINEMAP_DATA_INIT);
         }
     }
 
@@ -270,6 +270,7 @@ public class DataManager {
                     continue;
 
                 // get odsay Station Id
+                System.out.println("StationName : "+stationName+fromLineNum+"->"+toLineNum);
                 int fromStationId = getOdsayStationId(stationName, fromLineNum);
                 int toStationId = getOdsayStationId(stationName, toLineNum);
 
@@ -278,16 +279,12 @@ public class DataManager {
                 System.out.println(transfer.toString());
             }
         } catch(Exception e) {
-            throw new GeneralException(ErrorStatus.FAILURE_DATA_INIT);
+            throw new GeneralException(ErrorStatus.FAILURE_TRANSFER_DATA_INIT);
         }
     }
 
     private String parseTransferStationName(Row row){
         String stationName = row.getCell(2).getStringCellValue();
-
-        if (stationName.equals("이수"))
-            stationName = "총신대입구";
-
         return stationName;
     }
 
@@ -313,6 +310,11 @@ public class DataManager {
     }
 
     private int getOdsayStationId(String stationName, int odsayLaneType){
+        if (stationName.equals("이수") && odsayLaneType == 4)
+            stationName = "총신대입구";
+        if (stationName.equals("총신대입구") && odsayLaneType == 7)
+            stationName = "이수";
+
         Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
         return station.getOdsayStationID();
