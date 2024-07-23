@@ -115,10 +115,14 @@ public class RouteService {
 
     private void updateSchedules(List<Route> routeList) {
         for (Route route : routeList) {
-            Schedule schedule = createSchedule(route.getSubRouteList());
-            scheduleRepository.delete(route.getSchedule());
-            route.updateSchedule(schedule);
-            schedule.setRoute(route);
+            Schedule newSchedule = createSchedule(route.getSubRouteList());
+
+            Schedule oldSchedule = route.getSchedule();
+            route.updateSchedule(newSchedule);
+            newSchedule.setRoute(route);
+
+            // 기존 스케쥴 삭제
+            scheduleRepository.delete(oldSchedule);
         }
     }
 
