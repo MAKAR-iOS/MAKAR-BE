@@ -6,9 +6,9 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class TokenDto {
-    private Integer userId;
+    private Long userId;
 
-    public static TokenDto of(Integer userId) {
+    public static TokenDto of(Long userId) {
         return new TokenDto(userId);
     }
 }

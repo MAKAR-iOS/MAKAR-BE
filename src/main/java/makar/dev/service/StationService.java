@@ -86,8 +86,8 @@ public class StationService {
 
     // 즐겨찾는 역(집) 업데이트
     @Transactional
-    public StationResponse.StationDto updateFavoriteHomeStation(StationRequest.FavoriteStationDto favoriteStationDto){
-        User user = findById(favoriteStationDto.getUserId());
+    public StationResponse.StationDto updateFavoriteHomeStation(StationRequest.FavoriteStationDto favoriteStationDto, Long userId){
+        User user = findById(userId);
         Station station = findByStationNameAndOdsayLaneType(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
         user.updateFavoriteHomeStation(station);
         return StationConverter.toStationDto(station);
@@ -95,8 +95,8 @@ public class StationService {
 
     // 즐겨찾는 역(학교) 업데이트
     @Transactional
-    public StationResponse.StationDto updateFavoriteSchoolStation(StationRequest.FavoriteStationDto favoriteStationDto){
-        User user = findById(favoriteStationDto.getUserId());
+    public StationResponse.StationDto updateFavoriteSchoolStation(StationRequest.FavoriteStationDto favoriteStationDto, Long userId){
+        User user = findById(userId);
         Station station = findByStationNameAndOdsayLaneType(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
         user.updateFavoriteSchoolStation(station);
         return StationConverter.toStationDto(station);
