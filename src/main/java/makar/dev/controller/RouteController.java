@@ -2,9 +2,11 @@ package makar.dev.controller;
 
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
+import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.SuccessStatus;
 import makar.dev.dto.request.RouteRequest;
 import makar.dev.service.RouteService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -22,14 +24,14 @@ public class RouteController {
 
     // 경로 설정
     @PostMapping()
-    public ApiResponse setRoute(@RequestParam(value = "userId") Long userId, @RequestParam(value = "routeId") Long routeId){
-        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(userId, routeId));
+    public ApiResponse setRoute(@AuthenticationPrincipal TokenDto tokenDto, @RequestParam(value = "routeId") Long routeId){
+        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(tokenDto.getUserId(), routeId));
     }
 
     // 경로 삭제
     @DeleteMapping()
-    public ApiResponse deleteRoute(@RequestParam(value = "userId") Long userId){
-        routeService.deleteRoute(userId);
+    public ApiResponse deleteRoute(@AuthenticationPrincipal TokenDto tokenDto){
+        routeService.deleteRoute(tokenDto.getUserId());
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_DELETE);
     }
 

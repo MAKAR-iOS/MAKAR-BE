@@ -34,7 +34,7 @@ public class JwtVerifier {
     private TokenDto verifyToken(String bearerToken) {
         if (bearerToken.equals("Bearer test") /**&& profile.equals("local")**/) {
             // Allow "Bearer test" token only in test profile for simplicity
-            return new TokenDto(1);
+            return new TokenDto(1L);
         }
 
         try {
@@ -48,7 +48,7 @@ public class JwtVerifier {
             DecodedJWT verifiedJWT = tokenVerifier.verify(token);
 
             return new TokenDto(
-                    verifiedJWT.getClaim("userId").asInt());
+                    verifiedJWT.getClaim("userId").asLong());
         } catch (TokenExpiredException e) {
             throw new TokenExpiredException("Token expired", Instant.now());
         } catch (JWTVerificationException e) {
