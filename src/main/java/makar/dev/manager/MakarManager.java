@@ -79,10 +79,6 @@ public class MakarManager {
     private void computeTransferMakarTime(Calendar takingTime, int dayOfWeek, SubwaySchedule subwaySchedule, int odsayLaneType, int wayCode, int fromStationID, int toStationID) {
         SubwaySchedule.OrdList ordList = getOrdListByDayOfWeek(dayOfWeek, subwaySchedule);
         List<SubwaySchedule.OrdList.TimeDirection.TimeData> time = getTimeByWayCode(wayCode, ordList);
-        System.out.println("[WayCode] : "+wayCode);
-        for (SubwaySchedule.OrdList.TimeDirection.TimeData timeData : time){
-            System.out.println("Time : "+timeData.toString());
-        }
         findMakarTime(time, takingTime, odsayLaneType, wayCode, fromStationID, toStationID);
     }
 
@@ -114,12 +110,7 @@ public class MakarManager {
                     if (canGoInSubway.get())
                         break;
 
-                    // TODO: 상행 리스트가 안가져와짐
                     List<LineStation> stationList = getStationListByWayCode(lineMap, wayCode);
-                    System.out.println("[WayCode] : "+wayCode);
-                    for (LineStation lineStation : stationList){
-                        System.out.println("[LineStation] : "+lineStation.getStationName());
-                    }
 
                     int startIndex = getStationIndex(stationList, fromStationID);
                     int endIndex = getStationIndex(stationList, toStationID);
