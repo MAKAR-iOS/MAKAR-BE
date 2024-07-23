@@ -35,5 +35,11 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_DELETE);
     }
 
+    // 설정된 경로 조회
+    @GetMapping("/set")
+    public ApiResponse getSetRoute(@AuthenticationPrincipal TokenDto tokenDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._SET_ROUTE_GET, routeService.getSetRoute(tokenDto.getUserId()));
+    }
+
 
 }
