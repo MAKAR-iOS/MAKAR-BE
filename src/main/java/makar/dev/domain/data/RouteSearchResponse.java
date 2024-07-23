@@ -77,6 +77,9 @@ public class RouteSearchResponse {
         @JsonProperty("endID")
         private int endID;
 
+        @JsonProperty("passStopList")
+        private PassStopList passStopList;
+
         public boolean isWalkType() {
             return trafficType == 3;
         }
@@ -91,5 +94,20 @@ public class RouteSearchResponse {
         @JsonProperty("subwayCode")
         private int lineNum;
     }
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class PassStopList {
+        @JsonProperty("stations")
+        private List<Station> stations;
+    }
+
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Station {
+        @JsonProperty("stationName")
+        private String stationName;
+    }
+
 
 }

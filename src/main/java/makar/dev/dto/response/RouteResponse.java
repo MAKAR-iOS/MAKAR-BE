@@ -22,6 +22,7 @@ public class RouteResponse {
         private String sourceTime; // 출발 시각
         private String destinationTime;  // 도착 시각
         private int totalTime; // 총 소요 시간
+        private int transferCount; // 환승 횟수
         private List<SubRouteDto> subRouteDtoList; // 환승 정보
     }
 
@@ -35,6 +36,7 @@ public class RouteResponse {
         private int lineNum;
         private int sectionTime;
         private int transferTime;
+        private List<String> path;
     }
 
     @Data @Builder

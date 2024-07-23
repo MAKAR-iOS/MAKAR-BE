@@ -3,6 +3,8 @@ package makar.dev.domain;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.List;
+
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -36,6 +38,9 @@ public class SubRoute {
     private int sectionTime;
 
     private int transferTime; // 해당 루트 이후 환승시 소요 시간
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    private List<String> path;
 
     @ManyToOne
     @JoinColumn(name = "route_id")

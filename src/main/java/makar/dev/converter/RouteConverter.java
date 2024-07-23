@@ -4,6 +4,7 @@ import makar.dev.domain.*;
 import makar.dev.domain.data.RouteSearchResponse;
 import makar.dev.dto.response.RouteResponse;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class RouteConverter {
@@ -13,7 +14,7 @@ public class RouteConverter {
                 .sourceStation(sourceStation)
                 .destinationStation(destinationStation)
                 .schedule(schedule)
-                .transferCount(transferCount)
+                .transferCount(transferCount-1)
                 .subRouteList(subRouteList)
                 .build();
     }
@@ -32,12 +33,21 @@ public class RouteConverter {
                 .sourceTime(route.getSchedule().getSourceTime())
                 .destinationTime(route.getSchedule().getDestinationTime())
                 .totalTime(route.getSchedule().getTotalTime())
+                .transferCount(route.getTransferCount())
                 .subRouteDtoList(subRouteDtoList)
                 .build();
     }
 
     public static SubRoute toSubRoute(RouteSearchResponse.SubPath subPath) {
         RouteSearchResponse.Lane lane = subPath.getLane().get(0);
+
+        // parse path list
+        RouteSearchResponse.PassStopList passStopList = subPath.getPassStopList();
+        List<RouteSearchResponse.Station> stations = passStopList.getStations();
+        List<String> path = new ArrayList<>();
+        for (RouteSearchResponse.Station station : stations){
+            path.add(station.getStationName());
+        }
 
         return SubRoute.builder()
                 .toStationName(subPath.getEndStationName())
@@ -47,6 +57,7 @@ public class RouteConverter {
                 .lineNum(lane.getLineNum())
                 .wayCode(subPath.getWayCode())
                 .sectionTime(subPath.getSectionTime())
+                .path(path)
                 .build();
     }
 
@@ -57,6 +68,7 @@ public class RouteConverter {
                 .lineNum(subRoute.getLineNum())
                 .sectionTime(subRoute.getSectionTime())
                 .transferTime(subRoute.getTransferTime())
+                .path(subRoute.getPath())
                 .build();
     }
 
