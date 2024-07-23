@@ -15,6 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final DataManager dataManager;
 
+    @Transactional
     public void initDatabase(){
         // parse station information
 //        dataManager.readAndSaveStationInfo();

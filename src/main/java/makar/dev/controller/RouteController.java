@@ -4,7 +4,6 @@ import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
 import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.SuccessStatus;
-import makar.dev.dto.request.RouteRequest;
 import makar.dev.service.RouteService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -18,8 +17,9 @@ public class RouteController {
 
     // 경로 리스트 조회
     @GetMapping()
-    public ApiResponse searchRoute(@RequestBody RouteRequest.SearchRouteDto searchRouteDto) {
-        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(searchRouteDto));
+    public ApiResponse searchRoute(@RequestParam(value = "fromStationName") String fromStationName, @RequestParam(value = "fromLineNum") int fromLineNum,
+                                   @RequestParam(value = "toStationName") String toStationName, @RequestParam(value = "toLineNum") int toLineNum) {
+        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(fromStationName, fromLineNum, toStationName, toLineNum));
     }
 
     // 경로 설정
