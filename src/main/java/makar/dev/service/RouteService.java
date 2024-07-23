@@ -85,6 +85,17 @@ public class RouteService {
         user.getNotiList().clear();
     }
 
+    // 설정된 경로 조회
+    public RouteResponse.RouteDetailDto getSetRoute(Long userId){
+        User user = findUserById(userId);
+        List<Noti> notiList = user.getNotiList();
+        if (notiList.isEmpty())
+            throw new GeneralException(ErrorStatus.INVALID_SET_ROUTE);
+
+        Route route = notiList.get(0).getRoute();
+        return RouteConverter.toRouteDetailDto(route);
+    }
+
     private Station findStation(String name, int num){
         return stationRepository.findByStationNameAndOdsayLaneType(name, num)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));

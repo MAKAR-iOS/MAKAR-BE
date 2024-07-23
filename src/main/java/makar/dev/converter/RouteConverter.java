@@ -38,6 +38,25 @@ public class RouteConverter {
                 .build();
     }
 
+    public static RouteResponse.RouteDetailDto toRouteDetailDto(Route route) {
+        List<RouteResponse.SubRouteDetailDto> subRouteDetailDtoList = route.getSubRouteList().stream()
+                .map(RouteConverter::toSubRouteDetailDto)
+                .toList();
+
+        return RouteResponse.RouteDetailDto.builder()
+                .routeId(route.getRouteId())
+                .sourceStationName(route.getSourceStation().getStationName())
+                .sourceLineNum(route.getSourceStation().getOdsayLaneType())
+                .destinationStationName(route.getDestinationStation().getStationName())
+                .destinationLineNum(route.getDestinationStation().getOdsayLaneType())
+                .sourceTime(route.getSchedule().getSourceTime())
+                .destinationTime(route.getSchedule().getDestinationTime())
+                .totalTime(route.getSchedule().getTotalTime())
+                .transferCount(route.getTransferCount())
+                .subRouteDtoList(subRouteDetailDtoList)
+                .build();
+    }
+
     public static SubRoute toSubRoute(RouteSearchResponse.SubPath subPath) {
         RouteSearchResponse.Lane lane = subPath.getLane().get(0);
 
@@ -63,6 +82,16 @@ public class RouteConverter {
 
     public static RouteResponse.SubRouteDto toSubRouteDto(SubRoute subRoute) {
         return RouteResponse.SubRouteDto.builder()
+                .fromStationName(subRoute.getFromStationName())
+                .toStationName(subRoute.getToStationName())
+                .lineNum(subRoute.getLineNum())
+                .sectionTime(subRoute.getSectionTime())
+                .transferTime(subRoute.getTransferTime())
+                .build();
+    }
+
+    public static RouteResponse.SubRouteDetailDto toSubRouteDetailDto(SubRoute subRoute) {
+        return RouteResponse.SubRouteDetailDto.builder()
                 .fromStationName(subRoute.getFromStationName())
                 .toStationName(subRoute.getToStationName())
                 .lineNum(subRoute.getLineNum())
