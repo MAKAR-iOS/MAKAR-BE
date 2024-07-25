@@ -28,6 +28,7 @@ public enum ErrorStatus {
     INVALID_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
     INVALID_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "이미 설정된 알림입니다."),
     INVALID_NOTI_DELETE(HttpStatus.BAD_REQUEST, 400, "잘못된 타입의 알림 삭제 요청입니다."),
+    INVALID_GETOFF_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "하차 알림 시간이 열차 탑승 시간보다 클 수 없습니다."),
 
     /**
      * Code : 403
