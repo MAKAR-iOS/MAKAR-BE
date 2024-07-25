@@ -57,9 +57,9 @@ public class RouteService {
         }
 
         // 막차 Noti 생성
-        Noti makarNoti = NotiConverter.toMAKARNoti(route, user);
+        Noti makarNoti = NotiConverter.toMAKARNoti(route, user, 10);
         // 하차 Noti 생성
-        Noti getOffNoti = NotiConverter.toGetOffNoti(route, user);
+        Noti getOffNoti = NotiConverter.toGetOffNoti(route, user, 10);
 
         notiRepository.save(makarNoti);
         notiRepository.save(getOffNoti);

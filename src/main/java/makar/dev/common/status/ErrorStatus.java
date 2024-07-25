@@ -26,6 +26,12 @@ public enum ErrorStatus {
     ALREADY_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "이미 설정된 경로가 존재합니다."),
     INVALID_DELETE_ROUTE(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
     INVALID_SET_ROUTE(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
+    INVALID_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "이미 설정된 알림입니다."),
+
+    /**
+     * Code : 403
+     */
+    FORBIDDEN_ROUTE(HttpStatus.FORBIDDEN, 403, "해당 경로에 대한 권한이 없습니다."),
 
     /**
      * Code : 404

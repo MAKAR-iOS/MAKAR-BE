@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 public class StationRequest {
 
     @Data
-    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class FavoriteStationDto {
