@@ -34,12 +34,16 @@ public class NotiConverter {
                 .build();
     }
 
-    public static NotiResponse.NotiListDto toNotiListDto(List<Noti> notiList){
-        List<NotiResponse.NotiDto> notiDtoList = notiList.stream()
+    public static NotiResponse.NotiListDto toNotiListDto(List<Noti> makarNotiList, List<Noti> getoffNotiList){
+        List<NotiResponse.NotiDto> makarNotiDtoList = makarNotiList.stream()
+                .map(NotiConverter::toNotiDto)
+                .toList();
+        List<NotiResponse.NotiDto> getoffNotiDtoList = getoffNotiList.stream()
                 .map(NotiConverter::toNotiDto)
                 .toList();
         return NotiResponse.NotiListDto.builder()
-                .notiDtoList(notiDtoList)
+                .makarNotiDtoList(makarNotiDtoList)
+                .getoffNotiDtoList(getoffNotiDtoList)
                 .build();
     }
 }

@@ -57,5 +57,13 @@ public class NotiController {
         return ApiResponse.SuccessResponse(SuccessStatus._GETOFF_NOTI_DELETE, notiService.deleteNoti(notiId, tokenDto, Notification.GETOFF));
     }
 
+    @Operation(
+            summary = "알림 리스트 조회",
+            description = "설정된 경로에 대한 유저의 알림 리스트를 조회합니다."
+    )
+    @GetMapping("")
+    public ApiResponse getNotiList(@AuthenticationPrincipal TokenDto tokenDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._NOTI_LIST_GET, notiService.getNotiList(tokenDto));
+    }
 
 }

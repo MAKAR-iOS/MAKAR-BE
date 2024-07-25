@@ -24,6 +24,7 @@ public class NotiResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class NotiListDto {
-        private List<NotiDto> notiDtoList;
+        private List<NotiDto> makarNotiDtoList;
+        private List<NotiDto> getoffNotiDtoList;
     }
 }
