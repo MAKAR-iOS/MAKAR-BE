@@ -46,21 +46,20 @@ public class NotiService {
         return NotiConverter.toNotiDto(noti);
     }
 
-    // 막차 알림 삭제
+    // 알림 삭제
     @Transactional
-    public NotiResponse.NotiListDto deleteMakarNoti(Long notiId, TokenDto tokenDto){
+    public NotiResponse.NotiListDto deleteNoti(Long notiId, TokenDto tokenDto, Notification notiType){
         User user = findUserById(tokenDto.getUserId());
         List<Noti> notiList = user.getNotiList();
+
+        // 경로 설정 확인
         validateUserRouteSet(notiList);
 
         Noti noti = findNotiById(notiId);
-
         // 알림에 대한 권한 확인
         validateNotiOwnerShip(noti, user);
-
-        // 알림 타입이 MAKAR이 아닐 경우
-        if (noti.getNotiType() != Notification.MAKAR)
-            throw new GeneralException(ErrorStatus.INVALID_NOTI_DELETE);
+        // 알림 타입 확인
+        validateNotiType(noti, notiType);
 
         // del noti
         notiList.remove(noti);
@@ -69,12 +68,11 @@ public class NotiService {
         return NotiConverter.toNotiListDto(user.getNotiList());
     }
 
-    private static int validateNotiMinute(int notiMinute, User user, Route route, Notification notiType) {
+    private int validateNotiMinute(int notiMinute, User user, Route route, Notification notiType) {
         List<Noti> notiList = user.getNotiList();
 
-        // 경로에 대한 권한이 없을 경우
-        if (notiList.get(0).getRoute() != route)
-            throw new GeneralException(ErrorStatus.FORBIDDEN_ROUTE);
+        // 경로에 대한 권한 확인
+        validateRouteOwnerShip(route, notiList);
 
         for (Noti noti : notiList){
             if (noti.getNotiType() != notiType)
@@ -93,10 +91,22 @@ public class NotiService {
             throw new GeneralException(ErrorStatus.INVALID_ROUTE_SET);
     }
 
+    private void validateNotiType(Noti noti, Notification notiType){
+        // 알림 타입이 유효하지 않을 경우
+        if (noti.getNotiType() != notiType)
+            throw new GeneralException(ErrorStatus.INVALID_NOTI_DELETE);
+    }
+
     private void validateNotiOwnerShip(Noti noti, User user){
         // 알림에 대한 권한이 없을 경우
         if (noti.getUser() != user)
             throw new GeneralException(ErrorStatus.FORBIDDEN_NOTI);
+    }
+
+    private void validateRouteOwnerShip(Route route, List<Noti> notiList){
+        // 경로에 대한 권한이 없을 경우
+        if (notiList.get(0).getRoute() != route)
+            throw new GeneralException(ErrorStatus.FORBIDDEN_ROUTE);
     }
 
     private Noti makeNotiEntity(Route route, User user, int notiMinute, Notification notiType){
