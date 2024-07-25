@@ -17,6 +17,8 @@ import makar.dev.repository.RouteRepository;
 import makar.dev.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -25,6 +27,17 @@ public class NotiService {
     private final UserRepository userRepository;
     private final NotiRepository notiRepository;
     private final RouteRepository routeRepository;
+
+    // 알림 리스트 조회
+    public NotiResponse.NotiListDto getNotiList(TokenDto tokenDto){
+        User user = findUserById(tokenDto.getUserId());
+        List<Noti> notiList = user.getNotiList();
+
+        // 경로 설정 확인
+        validateUserRouteSet(notiList);
+
+        return separateNotiList(notiList);
+    }
 
     // 알림 추가
     @Transactional
@@ -35,8 +48,15 @@ public class NotiService {
         // 경로 설정 확인
         validateUserRouteSet(user.getNotiList());
 
+        // 경로에 대한 권한 확인
+        validateRouteOwnerShip(route, user.getNotiList());
+
         // 알림 시간 중복 확인
-        int notiMinute = validateNotiMinute(notiDto.getNotiMinute(), user, route, notiType);
+        int notiMinute = validateDuplicateNotiMinute(notiDto.getNotiMinute(), user, notiType);
+
+        // 알림 시간 범위 확인
+        if (notiType == Notification.GETOFF)
+            validateGetoffNotiMinute(route, notiMinute);
 
         // noti 생성
         Noti noti = makeNotiEntity(route, user, notiMinute, notiType);
@@ -65,14 +85,29 @@ public class NotiService {
         notiList.remove(noti);
         notiRepository.delete(noti);
 
-        return NotiConverter.toNotiListDto(user.getNotiList());
+        return separateNotiList(user.getNotiList());
     }
 
-    private int validateNotiMinute(int notiMinute, User user, Route route, Notification notiType) {
-        List<Noti> notiList = user.getNotiList();
+    private NotiResponse.NotiListDto separateNotiList(List<Noti> notiList){
+        List<Noti> makarNotiList = new ArrayList<>();
+        List<Noti> getoffNotiList = new ArrayList<>();
 
-        // 경로에 대한 권한 확인
-        validateRouteOwnerShip(route, notiList);
+        for (Noti noti : notiList){
+            if (noti.getNotiType() == Notification.MAKAR)
+                makarNotiList.add(noti);
+            else
+                getoffNotiList.add(noti);
+        }
+
+        // minute에 대해 오름차순 정렬
+        Collections.sort(makarNotiList);
+        Collections.sort(getoffNotiList);
+
+        return NotiConverter.toNotiListDto(makarNotiList, getoffNotiList);
+    }
+
+    private int validateDuplicateNotiMinute(int notiMinute, User user, Notification notiType) {
+        List<Noti> notiList = user.getNotiList();
 
         for (Noti noti : notiList){
             if (noti.getNotiType() != notiType)
@@ -83,6 +118,12 @@ public class NotiService {
                 throw new GeneralException(ErrorStatus.INVALID_NOTI_MINUTE);
         }
         return notiMinute;
+    }
+
+    private void validateGetoffNotiMinute(Route route, int notiMinute) {
+        int totalTime = route.getSchedule().getTotalTime();
+        if (totalTime <= notiMinute)
+            throw new GeneralException(ErrorStatus.INVALID_GETOFF_NOTI_MINUTE);
     }
 
     private void validateUserRouteSet(List<Noti> notiList){

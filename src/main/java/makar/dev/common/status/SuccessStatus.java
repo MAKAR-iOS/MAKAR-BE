@@ -28,7 +28,8 @@ public enum SuccessStatus {
     _MAKAR_NOTI_POST(HttpStatus.OK, 200, "막차 알림 추가가 완료되었습니다."),
     _MAKAR_NOTI_DELETE(HttpStatus.OK, 200, "막차 알림 삭제가 완료되었습니다."),
     _GETOFF_NOTI_POST(HttpStatus.OK, 200, "하차 알림 추가가 완료되었습니다."),
-    _GETOFF_NOTI_DELETE(HttpStatus.OK, 200, "하차 알림 삭제가 완료되었습니다.");
+    _GETOFF_NOTI_DELETE(HttpStatus.OK, 200, "하차 알림 삭제가 완료되었습니다."),
+    _NOTI_LIST_GET(HttpStatus.OK, 200, "알림 리스트 조회가 완료되었습니다.");
 
 
     private final HttpStatus httpStatus;
