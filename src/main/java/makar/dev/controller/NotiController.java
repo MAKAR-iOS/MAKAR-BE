@@ -1,0 +1,40 @@
+package makar.dev.controller;
+
+import io.swagger.v3.oas.annotations.Operation;
+import lombok.RequiredArgsConstructor;
+import makar.dev.common.response.ApiResponse;
+import makar.dev.common.security.dto.TokenDto;
+import makar.dev.common.status.SuccessStatus;
+import makar.dev.dto.request.NotiRequest;
+import makar.dev.service.NotiService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/noti")
+public class NotiController {
+    private final NotiService notiService;
+
+    @Operation(
+            summary = "막차 알림 추가",
+            description = "설정된 경로에 막차 알림을 추가합니다."
+    )
+    @PostMapping("/makar")
+    public ApiResponse postMakarNoti(@RequestBody NotiRequest.NotiDto notiDto,
+                                     @AuthenticationPrincipal TokenDto tokenDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._MAKAR_NOTI_POST, notiService.postMakarNoti(notiDto, tokenDto));
+    }
+
+    @Operation(
+            summary = "막차 알림 삭제",
+            description = "설정된 경로의 막차 알림을 삭제하고 유저의 알림 리스트를 반환합니다."
+    )
+    @DeleteMapping("/makar")
+    public ApiResponse deleteMakarNoti(@RequestParam(value = "notiId") Long notiId,
+                                     @AuthenticationPrincipal TokenDto tokenDto){
+        return ApiResponse.SuccessResponse(SuccessStatus._MAKAR_NOTI_DELETE, notiService.deleteMakarNoti(notiId, tokenDto));
+    }
+
+
+}
