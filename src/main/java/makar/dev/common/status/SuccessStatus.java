@@ -25,7 +25,8 @@ public enum SuccessStatus {
     _SET_ROUTE_GET(HttpStatus.OK, 200, "설정된 경로 조회가 완료되었습니다."),
 
     // NotiController
-    _MAKAR_NOTI_POST(HttpStatus.OK, 200, "막차 알림 추가가 완료되었습니다.");
+    _MAKAR_NOTI_POST(HttpStatus.OK, 200, "막차 알림 추가가 완료되었습니다."),
+    _MAKAR_NOTI_DELETE(HttpStatus.OK, 200, "막차 알림 삭제가 완료되었습니다.");
 
 
     private final HttpStatus httpStatus;

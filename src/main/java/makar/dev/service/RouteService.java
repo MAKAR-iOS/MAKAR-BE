@@ -77,7 +77,7 @@ public class RouteService {
 
         // 설정된 경로가 없을 경우
         if (notiList.isEmpty()){
-            throw new GeneralException(ErrorStatus.INVALID_DELETE_ROUTE);
+            throw new GeneralException(ErrorStatus.INVALID_ROUTE_DELETE);
         }
 
         // noti list 초기화
@@ -90,7 +90,7 @@ public class RouteService {
         User user = findUserById(userId);
         List<Noti> notiList = user.getNotiList();
         if (notiList.isEmpty())
-            throw new GeneralException(ErrorStatus.INVALID_SET_ROUTE);
+            throw new GeneralException(ErrorStatus.INVALID_ROUTE_SET);
 
         Route route = notiList.get(0).getRoute();
         return RouteConverter.toRouteDetailDto(route);

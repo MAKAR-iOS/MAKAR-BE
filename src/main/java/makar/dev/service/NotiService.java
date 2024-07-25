@@ -1,5 +1,6 @@
 package makar.dev.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.enums.Notification;
 import makar.dev.common.exception.GeneralException;
@@ -10,6 +11,7 @@ import makar.dev.domain.Noti;
 import makar.dev.domain.Route;
 import makar.dev.domain.User;
 import makar.dev.dto.request.NotiRequest;
+import makar.dev.dto.response.NotiResponse;
 import makar.dev.repository.NotiRepository;
 import makar.dev.repository.RouteRepository;
 import makar.dev.repository.UserRepository;
@@ -25,24 +27,49 @@ public class NotiService {
     private final RouteRepository routeRepository;
 
     // 막차 알림 추가
-    public void postMakarNoti(NotiRequest.NotiDto notiDto, TokenDto tokenDto){
+    @Transactional
+    public NotiResponse.NotiDto postMakarNoti(NotiRequest.NotiDto notiDto, TokenDto tokenDto){
         User user = findUserById(tokenDto.getUserId());
         Route route = findRouteById(notiDto.getRouteId());
 
-        // 경로 설정이 안되어 있을 경우
-        if (user.getNotiList().isEmpty())
-            throw new GeneralException(ErrorStatus.INVALID_SET_ROUTE);
+        // 경로 설정 확인
+        validateUserRouteSet(user.getNotiList());
 
         // 알림 시간 중복 확인
-        int notiMinute = checkNotiMinute(notiDto.getNotiMinute(), user, route, Notification.MAKAR);
+        int notiMinute = validateNotiMinute(notiDto.getNotiMinute(), user, route, Notification.MAKAR);
 
         // noti 생성
         Noti noti = NotiConverter.toMAKARNoti(route, user, notiMinute);
         notiRepository.save(noti);
         user.addNotiList(noti);
+
+        return NotiConverter.toNotiDto(noti);
     }
 
-    private static int checkNotiMinute(int notiMinute, User user, Route route, Notification notiType) {
+    // 막차 알림 삭제
+    @Transactional
+    public NotiResponse.NotiListDto deleteMakarNoti(Long notiId, TokenDto tokenDto){
+        User user = findUserById(tokenDto.getUserId());
+        List<Noti> notiList = user.getNotiList();
+        validateUserRouteSet(notiList);
+
+        Noti noti = findNotiById(notiId);
+
+        // 알림에 대한 권한 확인
+        validateNotiOwnerShip(noti, user);
+
+        // 알림 타입이 MAKAR이 아닐 경우
+        if (noti.getNotiType() != Notification.MAKAR)
+            throw new GeneralException(ErrorStatus.INVALID_NOTI_DELETE);
+
+        // del noti
+        notiList.remove(noti);
+        notiRepository.delete(noti);
+
+        return NotiConverter.toNotiListDto(user.getNotiList());
+    }
+
+    private static int validateNotiMinute(int notiMinute, User user, Route route, Notification notiType) {
         List<Noti> notiList = user.getNotiList();
 
         // 경로에 대한 권한이 없을 경우
@@ -60,6 +87,18 @@ public class NotiService {
         return notiMinute;
     }
 
+    private void validateUserRouteSet(List<Noti> notiList){
+        // 경로 설정이 안되어 있을 경우
+        if (notiList.isEmpty())
+            throw new GeneralException(ErrorStatus.INVALID_ROUTE_SET);
+    }
+
+    private void validateNotiOwnerShip(Noti noti, User user){
+        // 알림에 대한 권한이 없을 경우
+        if (noti.getUser() != user)
+            throw new GeneralException(ErrorStatus.FORBIDDEN_NOTI);
+    }
+
     private User findUserById(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
@@ -68,5 +107,10 @@ public class NotiService {
     private Route findRouteById(Long routeId){
         return routeRepository.findById(routeId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_ROUTE));
+    }
+
+    private Noti findNotiById(Long notiId){
+        return notiRepository.findById(notiId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_NOTI));
     }
 }
