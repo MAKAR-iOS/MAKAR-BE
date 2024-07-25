@@ -26,9 +26,9 @@ public class NotiService {
     private final NotiRepository notiRepository;
     private final RouteRepository routeRepository;
 
-    // 막차 알림 추가
+    // 알림 추가
     @Transactional
-    public NotiResponse.NotiDto postMakarNoti(NotiRequest.NotiDto notiDto, TokenDto tokenDto){
+    public NotiResponse.NotiDto postNoti(NotiRequest.NotiDto notiDto, TokenDto tokenDto, Notification notiType){
         User user = findUserById(tokenDto.getUserId());
         Route route = findRouteById(notiDto.getRouteId());
 
@@ -36,10 +36,10 @@ public class NotiService {
         validateUserRouteSet(user.getNotiList());
 
         // 알림 시간 중복 확인
-        int notiMinute = validateNotiMinute(notiDto.getNotiMinute(), user, route, Notification.MAKAR);
+        int notiMinute = validateNotiMinute(notiDto.getNotiMinute(), user, route, notiType);
 
         // noti 생성
-        Noti noti = NotiConverter.toMAKARNoti(route, user, notiMinute);
+        Noti noti = makeNotiEntity(route, user, notiMinute, notiType);
         notiRepository.save(noti);
         user.addNotiList(noti);
 
@@ -97,6 +97,15 @@ public class NotiService {
         // 알림에 대한 권한이 없을 경우
         if (noti.getUser() != user)
             throw new GeneralException(ErrorStatus.FORBIDDEN_NOTI);
+    }
+
+    private Noti makeNotiEntity(Route route, User user, int notiMinute, Notification notiType){
+        Noti noti;
+        if (notiType == Notification.MAKAR)
+            noti = NotiConverter.toMAKARNoti(route, user, notiMinute);
+        else
+            noti = NotiConverter.toGetOffNoti(route, user, notiMinute);
+        return noti;
     }
 
     private User findUserById(Long userId){
