@@ -21,8 +21,8 @@ public class RouteController {
             description = "출발역과 도착역을 파라미터로 받아 역 간의 경로 리스트를 검색합니다."
     )
     @GetMapping()
-    public ApiResponse searchRoute(@RequestParam(value = "fromStationName") String fromStationName, @RequestParam(value = "fromLineNum") int fromLineNum,
-                                   @RequestParam(value = "toStationName") String toStationName, @RequestParam(value = "toLineNum") int toLineNum) {
+    public ApiResponse searchRoute(@RequestParam(value = "fromStationName") String fromStationName, @RequestParam(value = "fromLineNum") String fromLineNum,
+                                   @RequestParam(value = "toStationName") String toStationName, @RequestParam(value = "toLineNum") String toLineNum) {
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(fromStationName, fromLineNum, toStationName, toLineNum));
     }
 

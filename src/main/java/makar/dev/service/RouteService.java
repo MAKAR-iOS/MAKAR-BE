@@ -35,7 +35,7 @@ public class RouteService {
     private final TransferService transferService;
 
     // 경로 리스트 검색
-    public RouteResponse.SearchRouteDto searchRoute(String fromStationName, int fromLineNum, String toStationName, int toLineNum) {
+    public RouteResponse.SearchRouteDto searchRoute(String fromStationName, String fromLineNum, String toStationName, String toLineNum) {
         Station sourceStation = findStation(fromStationName, fromLineNum);
         Station destinationStation = findStation(toStationName, toLineNum);
 
@@ -95,8 +95,8 @@ public class RouteService {
         return RouteConverter.toRouteDetailDto(route);
     }
 
-    private Station findStation(String name, int num){
-        return stationRepository.findByStationNameAndOdsayLaneType(name, num)
+    private Station findStation(String stationName, String lineNum){
+        return stationRepository.findByStationNameAndLineNum(stationName, lineNum)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
     }
 
