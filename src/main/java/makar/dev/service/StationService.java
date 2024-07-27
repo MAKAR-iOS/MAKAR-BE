@@ -33,14 +33,14 @@ public class StationService {
 
     // 역 세부 정보 조회
     public StationResponse.StationDetailDto getStationDetail(String stationName, String lineNum) {
-        List<Station> station = stationRepository.findByStationNameAndLineNum(stationName, lineNum);
-        return StationConverter.toStationDetailDto(station.get(0));
+        Station station = findByStationNameAndLineNum(stationName, lineNum);
+        return StationConverter.toStationDetailDto(station);
     }
 
     // 역 세부 정보 수정
     @Transactional
     public StationResponse.StationDetailDto updateStationDetail(String stationName, String lineNum) {
-        Station station = stationRepository.findByStationNameAndLineNum(stationName, lineNum).get(0);
+        Station station = findByStationNameAndLineNum(stationName, lineNum);
 
         // 대중교통 정류장 검색 API 호출
         List<OdsayStation.Station> stations = apiManager.searchStation(stationName);
@@ -88,7 +88,7 @@ public class StationService {
     @Transactional
     public StationResponse.StationDto updateFavoriteHomeStation(StationRequest.FavoriteStationDto favoriteStationDto, Long userId){
         User user = findById(userId);
-        Station station = findByStationNameAndOdsayLaneType(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
+        Station station = findByStationNameAndLineNum(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
         user.updateFavoriteHomeStation(station);
         return StationConverter.toStationDto(station);
     }
@@ -97,7 +97,7 @@ public class StationService {
     @Transactional
     public StationResponse.StationDto updateFavoriteSchoolStation(StationRequest.FavoriteStationDto favoriteStationDto, Long userId){
         User user = findById(userId);
-        Station station = findByStationNameAndOdsayLaneType(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
+        Station station = findByStationNameAndLineNum(favoriteStationDto.getStationName(), favoriteStationDto.getLineNum());
         user.updateFavoriteSchoolStation(station);
         return StationConverter.toStationDto(station);
     }
@@ -129,8 +129,8 @@ public class StationService {
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
     }
 
-    private Station findByStationNameAndOdsayLaneType(String stationName, int odsayLaneType){
-     return stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
+    private Station findByStationNameAndLineNum(String stationName, String lineNum){
+     return stationRepository.findByStationNameAndLineNum(stationName, lineNum)
              .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
     }
 

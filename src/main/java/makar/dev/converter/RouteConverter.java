@@ -27,9 +27,9 @@ public class RouteConverter {
         return RouteResponse.RouteDto.builder()
                 .routeId(route.getRouteId())
                 .sourceStationName(route.getSourceStation().getStationName())
-                .sourceLineNum(route.getSourceStation().getOdsayLaneType())
+                .sourceLineNum(route.getSourceStation().getLineNum())
                 .destinationStationName(route.getDestinationStation().getStationName())
-                .destinationLineNum(route.getDestinationStation().getOdsayLaneType())
+                .destinationLineNum(route.getDestinationStation().getLineNum())
                 .sourceTime(route.getSchedule().getSourceTime())
                 .destinationTime(route.getSchedule().getDestinationTime())
                 .totalTime(route.getSchedule().getTotalTime())
@@ -46,9 +46,9 @@ public class RouteConverter {
         return RouteResponse.RouteDetailDto.builder()
                 .routeId(route.getRouteId())
                 .sourceStationName(route.getSourceStation().getStationName())
-                .sourceLineNum(route.getSourceStation().getOdsayLaneType())
+                .sourceLineNum(route.getSourceStation().getLineNum())
                 .destinationStationName(route.getDestinationStation().getStationName())
-                .destinationLineNum(route.getDestinationStation().getOdsayLaneType())
+                .destinationLineNum(route.getDestinationStation().getLineNum())
                 .sourceTime(route.getSchedule().getSourceTime())
                 .destinationTime(route.getSchedule().getDestinationTime())
                 .totalTime(route.getSchedule().getTotalTime())
@@ -81,20 +81,22 @@ public class RouteConverter {
     }
 
     public static RouteResponse.SubRouteDto toSubRouteDto(SubRoute subRoute) {
+        String lineNum = mapOdsayStationTypeToLineNum(subRoute.getLineNum());
         return RouteResponse.SubRouteDto.builder()
                 .fromStationName(subRoute.getFromStationName())
                 .toStationName(subRoute.getToStationName())
-                .lineNum(subRoute.getLineNum())
+                .lineNum(lineNum)
                 .sectionTime(subRoute.getSectionTime())
                 .transferTime(subRoute.getTransferTime())
                 .build();
     }
 
     public static RouteResponse.SubRouteDetailDto toSubRouteDetailDto(SubRoute subRoute) {
+        String lineNum = mapOdsayStationTypeToLineNum(subRoute.getLineNum());
         return RouteResponse.SubRouteDetailDto.builder()
                 .fromStationName(subRoute.getFromStationName())
                 .toStationName(subRoute.getToStationName())
-                .lineNum(subRoute.getLineNum())
+                .lineNum(lineNum)
                 .sectionTime(subRoute.getSectionTime())
                 .transferTime(subRoute.getTransferTime())
                 .path(subRoute.getPath())
@@ -111,23 +113,16 @@ public class RouteConverter {
                 .build();
     }
 
-    public static RouteResponse.SetRouteDto toSetRouteDto(Route route, Noti makarNoti, Noti getOffNoti){
-        List<RouteResponse.SubRouteDto> subRouteDtoList = route.getSubRouteList().stream()
-                .map(RouteConverter::toSubRouteDto)
-                .toList();
-        return RouteResponse.SetRouteDto.builder()
-                .routeId(route.getRouteId())
-                .sourceStationName(route.getSourceStation().getStationName())
-                .sourceLineNum(route.getSourceStation().getOdsayLaneType())
-                .destinationStationName(route.getDestinationStation().getStationName())
-                .destinationLineNum(route.getDestinationStation().getOdsayLaneType())
-                .sourceTime(route.getSchedule().getSourceTime())
-                .destinationTime(route.getSchedule().getDestinationTime())
-                .totalTime(route.getSchedule().getTotalTime())
-                .subRouteDtoList(subRouteDtoList)
-                .getOffMinute(makarNoti.getNoti_minute())
-                .getOffMinute(getOffNoti.getNoti_minute())
-                .build();
+    private static String mapOdsayStationTypeToLineNum(int stationType) {
+        if (stationType >= 1 && stationType <= 9) {
+            return stationType + "호선";
+        }
+        if (stationType == 101) {
+            return "공항철도";
+        }
+        if (stationType == 104) {
+            return "경의중앙";
+        }
+        return null;
     }
-
 }
