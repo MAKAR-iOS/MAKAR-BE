@@ -93,16 +93,9 @@ public class DataManager {
                 continue;
             }
 
-            List<Station> dbStations = stationRepository.findByStationNameAndLineNum(stationName, lineNum);
-
-            if (dbStations.size() != 1) {
-                continue;
-            }
-
-            for (Station dbStation : dbStations) {
-                updateOdsayStationDataInEntity(dbStation, odsayStation);
-                stationRepository.save(dbStation);
-            }
+            Station dbStation = findStationByStationNameAndLineNum(stationName, lineNum);
+            updateOdsayStationDataInEntity(dbStation, odsayStation);
+            stationRepository.save(dbStation);
         }
     }
 
@@ -215,14 +208,13 @@ public class DataManager {
         return stationNames;
     }
 
-    private List<LineStation> mapOdsayStationNameWithLine(List<String> list, int code) {
+    private List<LineStation> mapOdsayStationNameWithLine(List<String> list, int odsayLineType) {
         List<LineStation> orderedStations = new ArrayList<>();
 
         for (int i = 0; i < list.size(); i++) {
             // odsay 역 이름 리스트 검색
             String stationName = doubleCheckStationName(list.get(i));
-            Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, code)
-                    .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
+            Station station = findStationByStationNameAndOdsayLaneType(stationName, odsayLineType);
 
             // TODO: get odsayStationName, put data in line station entity
             // ""호선의 ""역의 odsay 역 이름, odsayStationId 저장
@@ -315,8 +307,7 @@ public class DataManager {
         if (stationName.equals("총신대입구") && odsayLaneType == 7)
             stationName = "이수";
 
-        Station station = stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
-                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
+        Station station = findStationByStationNameAndOdsayLaneType(stationName, odsayLaneType);
         return station.getOdsayStationID();
     }
 
@@ -349,5 +340,15 @@ public class DataManager {
         } catch (Exception e){
             throw new GeneralException(ErrorStatus.FAILURE_READ_EXCEL_FILE);
         }
+    }
+
+    private Station findStationByStationNameAndOdsayLaneType(String stationName, int odsayLaneType){
+        return stationRepository.findByStationNameAndOdsayLaneType(stationName, odsayLaneType)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
+    }
+
+    private Station findStationByStationNameAndLineNum(String stationName, String lineNum){
+        return stationRepository.findByStationNameAndLineNum(stationName, lineNum)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
     }
 }

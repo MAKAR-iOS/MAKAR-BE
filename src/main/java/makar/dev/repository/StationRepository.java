@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface StationRepository extends JpaRepository<Station, Long> {
-    List<Station> findByStationNameAndLineNum(String stationName, String lineNum);
+    Optional<Station> findByStationNameAndLineNum(String stationName, String lineNum);
     Optional<Station> findByStationNameAndOdsayLaneType(String stationName, int code);
 
     List<Station> findByStationNameContaining(String stationName);

@@ -12,6 +12,6 @@ public class StationRequest {
     @AllArgsConstructor
     public static class FavoriteStationDto {
         public String stationName;
-        public int lineNum;
+        public String lineNum;
     }
 }

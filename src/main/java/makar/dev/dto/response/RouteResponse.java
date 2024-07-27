@@ -16,9 +16,9 @@ public class RouteResponse {
     public static class RouteDto {
         private Long routeId;
         private String sourceStationName;
-        private int sourceLineNum;
+        private String sourceLineNum;
         private String destinationStationName;
-        private int destinationLineNum;
+        private String destinationLineNum;
         private String sourceTime; // 출발 시각
         private String destinationTime;  // 도착 시각
         private int totalTime; // 총 소요 시간
@@ -32,9 +32,9 @@ public class RouteResponse {
     public static class RouteDetailDto {
         private Long routeId;
         private String sourceStationName;
-        private int sourceLineNum;
+        private String sourceLineNum;
         private String destinationStationName;
-        private int destinationLineNum;
+        private String destinationLineNum;
         private String sourceTime; // 출발 시각
         private String destinationTime;  // 도착 시각
         private int totalTime; // 총 소요 시간
@@ -49,7 +49,7 @@ public class RouteResponse {
     public static class SubRouteDto {
         private String fromStationName;
         private String toStationName;
-        private int lineNum;
+        private String lineNum;
         private int sectionTime;
         private int transferTime;
     }
@@ -61,7 +61,7 @@ public class RouteResponse {
     public static class SubRouteDetailDto {
         private String fromStationName;
         private String toStationName;
-        private int lineNum;
+        private String lineNum;
         private int sectionTime;
         private int transferTime;
         private List<String> path;
@@ -73,22 +73,4 @@ public class RouteResponse {
     public static class SearchRouteDto {
         private List<RouteDto> routeDtoList;
     }
-
-    @Data @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class SetRouteDto {
-        private Long routeId;
-        private String sourceStationName;
-        private int sourceLineNum;
-        private String destinationStationName;
-        private int destinationLineNum;
-        private String sourceTime; // 출발 시각
-        private String destinationTime;  // 도착 시각
-        private int totalTime; // 총 소요 시간
-        private List<SubRouteDto> subRouteDtoList; // 환승 정보
-        private int makarMinute;
-        private int getOffMinute;
-    }
-
 }

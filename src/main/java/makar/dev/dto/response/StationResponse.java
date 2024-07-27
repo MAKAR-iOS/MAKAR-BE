@@ -14,7 +14,7 @@ public class StationResponse {
     @AllArgsConstructor
     public static class StationDto {
         private String stationName;
-        private int lineNum;
+        private String lineNum;
     }
 
     @Data

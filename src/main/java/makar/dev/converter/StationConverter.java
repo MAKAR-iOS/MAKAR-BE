@@ -20,7 +20,7 @@ public class StationConverter {
     public static StationResponse.StationDto toStationDto(Station station){
         return StationResponse.StationDto.builder()
                 .stationName(station.getStationName())
-                .lineNum(station.getOdsayLaneType())
+                .lineNum(station.getLineNum())
                 .build();
     }
 
