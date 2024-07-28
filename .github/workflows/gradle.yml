@@ -12,6 +12,9 @@ on:
 #  pull_request:
 #    branches: [ "develop" ]
 
+env:
+  RESOURCE_PATH: ./makar/src/main/resources/application.yaml
+
 jobs:
   build-with-gradle:
     runs-on: ubuntu-22.04
@@ -25,10 +28,10 @@ jobs:
       with:
         java-version: '17'
         distribution: 'corretto'
-    - name: gradlew에 실행 권한 부여
-      run: chmod +x ./gradlew
-    - name: 프로젝트 빌드
-      run: ./gradlew build
+    - name: yml 파일 세팅
+      uses: microsoft/variable-substitution@v1
+      with:
+        files: ${{ env.RESOURCE_PATH }}
       env:
         ACCESS_TOKEN_EXP: ${{ secrets.ACCESS_TOKEN_EXP }}
         REFRESH_TOKEN_EXP: ${{ secrets.REFRESH_TOKEN_EXP }}
@@ -36,7 +39,10 @@ jobs:
         DATASOURCE_URL: ${{ secrets.DATASOURCE_URL }}
         DATASOURCE_USERNAME: ${{ secrets.DATASOURCE_USERNAME }}
         DATASOURCE_PASSWORD: ${{ secrets.DATASOURCE_PASSWORD }}
-
+    - name: gradlew에 실행 권한 부여
+      run: chmod +x ./gradlew
+    - name: 프로젝트 빌드
+      run: ./gradlew build
     - name: AWS credential 설정
       uses: aws-actions/configure-aws-credentials@v1
       with:
