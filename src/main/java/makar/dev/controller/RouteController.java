@@ -63,4 +63,24 @@ public class RouteController {
     public ApiResponse<RouteResponse.RecentRouteListDto> getAllRecentRoute(@AuthenticationPrincipal TokenDto tokenDto) {
         return ApiResponse.SuccessResponse(SuccessStatus._RECENT_ROUTE_LIST_GET, routeService.getAllRecentRoute(tokenDto.getUserId()));
     }
+
+    @Operation(
+            summary = "특정 최근 경로 삭제",
+            description = "최근 경로 리스트에서 특정 경로가 삭제됩니다."
+    )
+    @DeleteMapping("/recent/{route-id}")
+    public ApiResponse deleteRecentRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable("route-id") Long routeId) {
+        routeService.deleteRecentRoute(tokenDto.getUserId(), routeId);
+        return ApiResponse.SuccessResponse(SuccessStatus._RECENT_ROUTE_DELETE);
+    }
+
+    @Operation(
+            summary = "모든 최근 경로 삭제",
+            description = "최근 경로 리스트에서 모든 경로가 삭제됩니다."
+    )
+    @DeleteMapping("/recent/all")
+    public ApiResponse deleteAllRecentRoute(@AuthenticationPrincipal TokenDto tokenDto) {
+        routeService.deleteAllRecentRoute(tokenDto.getUserId());
+        return ApiResponse.SuccessResponse(SuccessStatus._All_RECENT_ROUTE_DELETE);
+    }
 }

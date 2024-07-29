@@ -66,6 +66,12 @@ public class User {
         }
         this.recentRouteList.add(route);
     }
+    public void removeRecentRouteList(Route route) {
+        this.recentRouteList.remove(route);
+    }
+    public void clearRecentRouteList() {
+        this.recentRouteList.clear();
+    }
 
     @Builder
     public User(String id, String password, String email, String username) {

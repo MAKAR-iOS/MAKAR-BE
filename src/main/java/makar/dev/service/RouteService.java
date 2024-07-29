@@ -280,4 +280,19 @@ public class RouteService {
                 .recentRouteList(RouteConverter.toBriefRouteDtoList(user.getRecentRouteList()))
                 .build();
     }
+
+    // 특정 최근 경로 삭제
+    @Transactional
+    public void deleteRecentRoute(Long userId, Long routeId) {
+        User user = findUserById(userId);
+        Route route = findRouteById(routeId);
+        user.removeRecentRouteList(route);
+    }
+
+    // 모든 최근 경로 삭제
+    @Transactional
+    public void deleteAllRecentRoute(Long userId) {
+        User user = findUserById(userId);
+        user.clearRecentRouteList();
+    }
 }
