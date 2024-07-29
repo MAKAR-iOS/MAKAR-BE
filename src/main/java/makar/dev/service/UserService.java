@@ -74,7 +74,7 @@ public class UserService {
         return UserConverter.toHomeDto(isRouteSet, user.getNotiList(), favoriteRouteList, recentRouteList);
     }
 
-    private User findUserById(Long userId){
+    public User findUserById(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
     }
