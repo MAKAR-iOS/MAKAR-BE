@@ -2,6 +2,7 @@ package makar.dev.converter;
 
 import makar.dev.domain.Noti;
 import makar.dev.domain.Route;
+import makar.dev.domain.User;
 import makar.dev.dto.response.NotiResponse;
 import makar.dev.dto.response.RouteResponse;
 import makar.dev.dto.response.UserResponse;
@@ -44,6 +45,15 @@ public class UserConverter {
                 .notiList(notiDtoList)
                 .favoriteRouteList(favoriteRouteDtoList)
                 .recentRouteList(recentRouteDtoList)
+                .build();
+    }
+
+    public static User toUser(String id, String password, String email, String username){
+        return User.builder()
+                .id(id)
+                .password(password)
+                .email(email)
+                .username(username)
                 .build();
     }
 }

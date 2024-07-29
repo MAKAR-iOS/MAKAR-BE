@@ -4,8 +4,9 @@ import lombok.RequiredArgsConstructor;
 import makar.dev.common.security.dto.AuthTokenDto;
 import makar.dev.common.security.jwt.JwtService;
 import makar.dev.common.util.PasswordEncoder;
-import makar.dev.dto.request.SignUpRequest;
-import makar.dev.dto.response.SignResponse;
+import makar.dev.converter.AuthConverter;
+import makar.dev.dto.request.AuthRequest;
+import makar.dev.dto.response.AuthResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import makar.dev.domain.User;
@@ -20,7 +21,7 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public SignResponse signUp(SignUpRequest request) {
+    public AuthResponse.SignDto signUp(AuthRequest.SignUpRequest request) {
         Optional<User> existingUser = userService.getOptionalUserById(request.getId());
 
         if (existingUser.isPresent()) {
@@ -35,10 +36,10 @@ public class AuthService {
 
         user.setRefreshToken(refreshToken.getToken());
 
-        return SignResponse.of(accessToken, refreshToken);
+        return AuthConverter.toSignDto(accessToken, refreshToken);
     }
 
-    public SignResponse signIn(String id, String password) {
+    public AuthResponse.SignDto signIn(String id, String password) {
         User user = userService.getOptionalUserById(id)
                 .orElseThrow(() -> new IllegalArgumentException("가입되지 않은 아이디입니다."));
 
@@ -51,6 +52,6 @@ public class AuthService {
 
         user.setRefreshToken(refreshToken.getToken());
 
-        return SignResponse.of(accessToken, refreshToken);
+        return AuthConverter.toSignDto(accessToken, refreshToken);
     }
 }
