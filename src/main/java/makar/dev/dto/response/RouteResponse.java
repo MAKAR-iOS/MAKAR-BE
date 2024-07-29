@@ -42,6 +42,16 @@ public class RouteResponse {
         private List<SubRouteDetailDto> subRouteDtoList;
     }
 
+    @Data @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BriefRouteDto {
+        private String sourceStationName;
+        private String sourceLineNum;
+        private String destinationStationName;
+        private String destinationLineNum;
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
