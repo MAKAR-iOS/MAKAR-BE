@@ -68,8 +68,8 @@ public class SecurityConfiguration {
                 authorize -> authorize
                         .requestMatchers(request -> request.getRequestURI().startsWith("/swagger-ui")).permitAll()
                         .requestMatchers(request -> request.getRequestURI().startsWith("/v3/api-docs")).permitAll()
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/auth/sign-up")).permitAll()
-                        .requestMatchers(request -> request.getRequestURI().startsWith("/auth/sign-in")).permitAll()
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth/sign-up")).permitAll()
+                        .requestMatchers(request -> request.getRequestURI().startsWith("/api/v1/auth/sign-in")).permitAll()
                         .anyRequest().authenticated()
         );
         http.addFilterBefore(
