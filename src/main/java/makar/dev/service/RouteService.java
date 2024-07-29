@@ -3,6 +3,7 @@ package makar.dev.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
+import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.ErrorStatus;
 import makar.dev.converter.NotiConverter;
 import makar.dev.converter.RouteConverter;
@@ -93,6 +94,16 @@ public class RouteService {
 
         Route route = notiList.get(0).getRoute();
         return RouteConverter.toRouteDetailDto(route);
+    }
+
+    // 즐겨찾는 경로 조회
+    public List<RouteResponse.BriefRouteDto> getFavoriteRouteList(TokenDto tokenDto) {
+        User user = findUserById(tokenDto.getUserId());
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+
+        return favoriteRouteList.stream()
+                .map(RouteConverter::toBriefRouteDto)
+                .toList();
     }
 
     private Station findStation(String stationName, String lineNum){

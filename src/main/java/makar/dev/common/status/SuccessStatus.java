@@ -23,6 +23,7 @@ public enum SuccessStatus {
     _ROUTE_DELETE(HttpStatus.OK, 200, "경로 삭제가 완료되었습니다."),
     _ROUTE_POST(HttpStatus.OK, 200, "경로 설정이 완료되었습니다."),
     _SET_ROUTE_GET(HttpStatus.OK, 200, "설정된 경로 조회가 완료되었습니다."),
+    _FAVORITE_ROUTE_LIST_GET(HttpStatus.OK, 200, "즐겨찾는 경로 조회가 완료되었습니다."),
 
     // NotiController
     _MAKAR_NOTI_POST(HttpStatus.OK, 200, "막차 알림 추가가 완료되었습니다."),
