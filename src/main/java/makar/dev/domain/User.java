@@ -59,7 +59,13 @@ public class User {
     public boolean isFavoriteHomeStationExist(){return this.favoriteHomeStation != null;}
     public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
     public void addNotiList(Noti noti){this.notiList.add(noti);}
-
+    public void addRecentRouteList(Route route) {
+        // 최근 경로 리스트 사이즈 최대 5개 유지
+        if (this.recentRouteList.size() >= 5) {
+            this.recentRouteList.remove(0);
+        }
+        this.recentRouteList.add(route);
+    }
 
     @Builder
     public User(String id, String password, String email, String username) {

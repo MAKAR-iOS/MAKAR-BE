@@ -65,6 +65,9 @@ public class RouteService {
 
         user.addNotiList(makarNoti);
         user.addNotiList(getOffNoti);
+
+        // 해당 경로, 유저의 최근 경로 리스트에 저장
+        user.addRecentRouteList(route);
         return RouteConverter.toRouteDto(route);
     }
 
@@ -270,4 +273,11 @@ public class RouteService {
         return sdf.format(calendar.getTime());
     }
 
+    // 최근 경로 리스트 조회하기
+    public RouteResponse.RecentRouteListDto getAllRecentRoute(Long userId) {
+        User user = findUserById(userId);
+        return RouteResponse.RecentRouteListDto.builder()
+                .recentRouteList(RouteConverter.toBriefRouteDtoList(user.getRecentRouteList()))
+                .build();
+    }
 }
