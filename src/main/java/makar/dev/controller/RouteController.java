@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
 import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.SuccessStatus;
+import makar.dev.dto.response.RouteResponse;
 import makar.dev.service.RouteService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -54,5 +55,12 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._SET_ROUTE_GET, routeService.getSetRoute(tokenDto.getUserId()));
     }
 
-
+    @Operation(
+            summary = "최근 경로 리스트 조회",
+            description = "최근에 설정된 경로 최대 5개를 조회합니다."
+    )
+    @GetMapping("/recent")
+    public ApiResponse<RouteResponse.RecentRouteListDto> getAllRecentRoute(@AuthenticationPrincipal TokenDto tokenDto) {
+        return ApiResponse.SuccessResponse(SuccessStatus._RECENT_ROUTE_LIST_GET, routeService.getAllRecentRoute(tokenDto.getUserId()));
+    }
 }

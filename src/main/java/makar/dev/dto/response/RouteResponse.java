@@ -52,6 +52,17 @@ public class RouteResponse {
         private String destinationLineNum;
     }
 
+    @Data @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class BriefRouteDtoWithRouteId {
+        private Long routeId;
+        private String sourceStationName;
+        private String sourceLineNum;
+        private String destinationStationName;
+        private String destinationLineNum;
+    }
+
     @Data
     @Builder
     @NoArgsConstructor
@@ -82,5 +93,12 @@ public class RouteResponse {
     @AllArgsConstructor
     public static class SearchRouteDto {
         private List<RouteDto> routeDtoList;
+    }
+
+    @Data @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class RecentRouteListDto {
+        private List<BriefRouteDtoWithRouteId> recentRouteList;
     }
 }

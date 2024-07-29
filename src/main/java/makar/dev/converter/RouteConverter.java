@@ -6,6 +6,7 @@ import makar.dev.dto.response.RouteResponse;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class RouteConverter {
 
@@ -64,6 +65,20 @@ public class RouteConverter {
                 .destinationStationName(route.getDestinationStation().getStationName())
                 .destinationLineNum(route.getDestinationStation().getLineNum())
                 .build();
+    }
+
+    public static List<RouteResponse.BriefRouteDtoWithRouteId> toBriefRouteDtoList(List<Route> routes){
+        return routes.stream()
+                .map(route ->
+                    RouteResponse.BriefRouteDtoWithRouteId.builder()
+                        .routeId(route.getRouteId())
+                        .sourceStationName(route.getSourceStation().getStationName())
+                        .sourceLineNum(route.getSourceStation().getLineNum())
+                        .destinationStationName(route.getDestinationStation().getStationName())
+                        .destinationLineNum(route.getDestinationStation().getLineNum())
+                        .build()
+                )
+                .collect(Collectors.toList());
     }
 
     public static SubRoute toSubRoute(RouteSearchResponse.SubPath subPath) {
