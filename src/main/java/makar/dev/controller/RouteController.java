@@ -30,8 +30,8 @@ public class RouteController {
             summary = "경로 설정",
             description = "경로를 설정합니다."
     )
-    @PostMapping()
-    public ApiResponse setRoute(@AuthenticationPrincipal TokenDto tokenDto, @RequestParam(value = "routeId") Long routeId){
+    @PostMapping("/{routeId}")
+    public ApiResponse setRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable(name = "routeId") Long routeId){
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(tokenDto.getUserId(), routeId));
     }
 
