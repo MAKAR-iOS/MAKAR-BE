@@ -119,6 +119,22 @@ public class RouteService {
         user.addFavoriteRoute(route);
     }
 
+    // 즐겨찾는 경로 삭제
+    @Transactional
+    public List<RouteResponse.BriefRouteDto> deleteFavoriteRoute(TokenDto tokenDto, Long routeId) {
+        User user = findUserById(tokenDto.getUserId());
+        Route route = findRouteById(routeId);
+
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        if (!favoriteRouteList.contains(route))
+            throw new GeneralException(ErrorStatus.INVALID_FAVORITE_ROUTE_DELETE);
+
+        favoriteRouteList.remove(route);
+        return favoriteRouteList.stream()
+                .map(RouteConverter::toBriefRouteDto)
+                .toList();
+    }
+
     private Station findStation(String stationName, String lineNum){
         return stationRepository.findByStationNameAndLineNum(stationName, lineNum)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));

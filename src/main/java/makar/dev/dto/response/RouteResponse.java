@@ -46,6 +46,7 @@ public class RouteResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class BriefRouteDto {
+        private Long routeId;
         private String sourceStationName;
         private String sourceLineNum;
         private String destinationStationName;

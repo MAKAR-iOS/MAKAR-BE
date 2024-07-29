@@ -28,6 +28,7 @@ public enum ErrorStatus {
     INVALID_ROUTE_DELETE(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
     INVALID_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
     ALREADY_FAVORITE_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "해당 경로는 이미 즐겨찾는 경로로 설정되었습니다."),
+    INVALID_FAVORITE_ROUTE_DELETE(HttpStatus.BAD_REQUEST, 400, "해당 경로는 즐겨찾는 경로로 설정되지 않았습니다."),
 
     // noti
     INVALID_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "이미 설정된 알림입니다."),
