@@ -100,7 +100,7 @@ public class RouteService {
     public List<RouteResponse.BriefRouteDto> getFavoriteRouteList(TokenDto tokenDto) {
         User user = findUserById(tokenDto.getUserId());
         List<Route> favoriteRouteList = user.getFavoriteRouteList();
-
+        // TODO: fix routeId order
         return favoriteRouteList.stream()
                 .map(RouteConverter::toBriefRouteDto)
                 .toList();
@@ -112,6 +112,7 @@ public class RouteService {
         User user = findUserById(tokenDto.getUserId());
         Route route = findRouteById(routeId);
 
+        // 해당 경로가 이미 즐겨찾는 경로로 설정된 경우
         List<Route> favoriteRouteList = user.getFavoriteRouteList();
         if (favoriteRouteList.contains(route))
             throw new GeneralException(ErrorStatus.ALREADY_FAVORITE_ROUTE_SET);
@@ -125,6 +126,7 @@ public class RouteService {
         User user = findUserById(tokenDto.getUserId());
         Route route = findRouteById(routeId);
 
+        // 해당 경로가 즐겨찾는 경로로 설정되지 않은 경우
         List<Route> favoriteRouteList = user.getFavoriteRouteList();
         if (!favoriteRouteList.contains(route))
             throw new GeneralException(ErrorStatus.INVALID_FAVORITE_ROUTE_DELETE);

@@ -44,10 +44,10 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Noti> notiList; //알림 설정
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Route> recentRouteList; //최근 경로 리스트
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Route> favoriteRouteList; //즐겨찾는 경로 리스트
 
     public User(String userName){
@@ -59,7 +59,7 @@ public class User {
     public boolean isFavoriteHomeStationExist(){return this.favoriteHomeStation != null;}
     public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
     public void addNotiList(Noti noti){this.notiList.add(noti);}
-    public void addFavoriteRoute(Route route){this.favoriteRouteList.add(route);}
+    public void addFavoriteRoute(Route route){this.favoriteRouteList.add(favoriteRouteList.size(), route);}
 
 
     @Builder
