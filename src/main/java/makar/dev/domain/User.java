@@ -59,6 +59,7 @@ public class User {
     public boolean isFavoriteHomeStationExist(){return this.favoriteHomeStation != null;}
     public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
     public void addNotiList(Noti noti){this.notiList.add(noti);}
+    public void addFavoriteRoute(Route route){this.favoriteRouteList.add(route);}
 
 
     @Builder

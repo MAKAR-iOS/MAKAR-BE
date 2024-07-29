@@ -23,9 +23,13 @@ public enum ErrorStatus {
     INVALID_API_KEY(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 API Key입니다."),
     INVALID_REQUEST(HttpStatus.BAD_REQUEST, 400,  "유효하지 않은 요청입니다."),
     INVALID_SOURCE_TIME_FORMAT(HttpStatus.BAD_REQUEST, 400, "유효하지 않은 막차 시간 형식으로 인해 도착 시간 계산 중 오류가 발생했습니다."),
+    // route
     ALREADY_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "이미 설정된 경로가 존재합니다."),
     INVALID_ROUTE_DELETE(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
     INVALID_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "설정된 경로가 존재하지 않습니다."),
+    ALREADY_FAVORITE_ROUTE_SET(HttpStatus.BAD_REQUEST, 400, "해당 경로는 이미 즐겨찾는 경로로 설정되었습니다."),
+
+    // noti
     INVALID_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "이미 설정된 알림입니다."),
     INVALID_NOTI_DELETE(HttpStatus.BAD_REQUEST, 400, "잘못된 타입의 알림 삭제 요청입니다."),
     INVALID_GETOFF_NOTI_MINUTE(HttpStatus.BAD_REQUEST, 400, "하차 알림 시간이 열차 탑승 시간보다 클 수 없습니다."),

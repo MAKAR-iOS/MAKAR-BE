@@ -106,6 +106,19 @@ public class RouteService {
                 .toList();
     }
 
+    // 즐겨찾는 경로 추가
+    @Transactional
+    public void addFavoriteRoute(TokenDto tokenDto, Long routeId) {
+        User user = findUserById(tokenDto.getUserId());
+        Route route = findRouteById(routeId);
+
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        if (favoriteRouteList.contains(route))
+            throw new GeneralException(ErrorStatus.ALREADY_FAVORITE_ROUTE_SET);
+
+        user.addFavoriteRoute(route);
+    }
+
     private Station findStation(String stationName, String lineNum){
         return stationRepository.findByStationNameAndLineNum(stationName, lineNum)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_STATION));
@@ -280,5 +293,4 @@ public class RouteService {
         }
         return sdf.format(calendar.getTime());
     }
-
 }
