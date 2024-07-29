@@ -64,7 +64,7 @@ public class StationController {
     }
 
     @Operation(
-            summary = "즐겨찾는 역(잡) 조회",
+            summary = "즐겨찾는 역(집) 조회",
             description = "즐겨찾는 역(집)의 정보를 조회합니다."
     )
     @GetMapping("/favorite/home")

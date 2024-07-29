@@ -54,5 +54,15 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._SET_ROUTE_GET, routeService.getSetRoute(tokenDto.getUserId()));
     }
 
+    @Operation(
+            summary = "경로 리스트 검색",
+            description = "출발역과 도착역을 파라미터로 받아 역 간의 경로 리스트를 검색합니다."
+    )
+    @GetMapping()
+    public ApiResponse getFavoriteRouteList(@RequestParam(value = "fromStationName") String fromStationName, @RequestParam(value = "fromLineNum") String fromLineNum,
+                                   @RequestParam(value = "toStationName") String toStationName, @RequestParam(value = "toLineNum") String toLineNum) {
+        return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_LIST_GET, routeService.searchRoute(fromStationName, fromLineNum, toStationName, toLineNum));
+    }
+
 
 }
