@@ -4,21 +4,13 @@ import makar.dev.domain.Noti;
 import makar.dev.domain.Route;
 import makar.dev.domain.User;
 import makar.dev.dto.response.NotiResponse;
-import makar.dev.dto.response.RouteResponse;
 import makar.dev.dto.response.UserResponse;
 
 import java.util.List;
 
 public class UserConverter {
 
-    public static UserResponse.HomeDto toHomeDto(boolean isRouteSet, List<Noti> notiList,
-                                                 List<Route> favoriteRouteList, List<Route> recentRouteList){
-        List<RouteResponse.BriefRouteDto> favoriteRouteDtoList = favoriteRouteList.stream()
-                .map(RouteConverter::toBriefRouteDto)
-                .toList();
-        List<RouteResponse.BriefRouteDto> recentRouteDtoList = recentRouteList.stream()
-                .map(RouteConverter::toBriefRouteDto)
-                .toList();
+    public static UserResponse.HomeDto toHomeDto(boolean isRouteSet, List<Noti> notiList){
 
         if (notiList.isEmpty())
             return UserResponse.HomeDto.builder()
@@ -28,8 +20,6 @@ public class UserConverter {
                     .makarTime(null)
                     .getoffTime(null)
                     .notiList(null)
-                    .favoriteRouteList(favoriteRouteDtoList)
-                    .recentRouteList(recentRouteDtoList)
                     .build();
 
         Route route = notiList.get(0).getRoute();
@@ -43,8 +33,6 @@ public class UserConverter {
                 .makarTime(route.getSchedule().getSourceTime())
                 .getoffTime(route.getSchedule().getDestinationTime())
                 .notiList(notiDtoList)
-                .favoriteRouteList(favoriteRouteDtoList)
-                .recentRouteList(recentRouteDtoList)
                 .build();
     }
 

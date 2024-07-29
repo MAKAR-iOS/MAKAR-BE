@@ -59,6 +59,7 @@ public class RouteConverter {
 
     public static RouteResponse.BriefRouteDto toBriefRouteDto(Route route){
         return RouteResponse.BriefRouteDto.builder()
+                .routeId(route.getRouteId())
                 .sourceStationName(route.getSourceStation().getStationName())
                 .sourceLineNum(route.getSourceStation().getLineNum())
                 .destinationStationName(route.getDestinationStation().getStationName())

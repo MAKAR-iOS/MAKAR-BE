@@ -31,8 +31,8 @@ public class NotiController {
             summary = "막차 알림 삭제",
             description = "설정된 경로의 막차 알림을 삭제하고 유저의 알림 리스트를 반환합니다."
     )
-    @DeleteMapping("/makar")
-    public ApiResponse deleteMakarNoti(@RequestParam(value = "notiId") Long notiId,
+    @DeleteMapping("/makar/{notiId}")
+    public ApiResponse deleteMakarNoti(@PathVariable(name = "notiId") Long notiId,
                                      @AuthenticationPrincipal TokenDto tokenDto){
         return ApiResponse.SuccessResponse(SuccessStatus._MAKAR_NOTI_DELETE, notiService.deleteNoti(notiId, tokenDto, Notification.MAKAR));
     }
@@ -51,8 +51,8 @@ public class NotiController {
             summary = "하차 알림 삭제",
             description = "설정된 경로의 하차 알림을 삭제하고 유저의 알림 리스트를 반환합니다."
     )
-    @DeleteMapping("/getoff")
-    public ApiResponse deleteGetOffNoti(@RequestParam(value = "notiId") Long notiId,
+    @DeleteMapping("/getoff/{notiId}")
+    public ApiResponse deleteGetOffNoti(@PathVariable(name = "notiId") Long notiId,
                                        @AuthenticationPrincipal TokenDto tokenDto){
         return ApiResponse.SuccessResponse(SuccessStatus._GETOFF_NOTI_DELETE, notiService.deleteNoti(notiId, tokenDto, Notification.GETOFF));
     }

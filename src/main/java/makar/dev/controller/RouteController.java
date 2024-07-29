@@ -30,8 +30,8 @@ public class RouteController {
             summary = "경로 설정",
             description = "경로를 설정합니다."
     )
-    @PostMapping()
-    public ApiResponse setRoute(@AuthenticationPrincipal TokenDto tokenDto, @RequestParam(value = "routeId") Long routeId){
+    @PostMapping("/{routeId}")
+    public ApiResponse setRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable(name = "routeId") Long routeId){
         return ApiResponse.SuccessResponse(SuccessStatus._ROUTE_POST, routeService.setRoute(tokenDto.getUserId(), routeId));
     }
 
@@ -54,5 +54,31 @@ public class RouteController {
         return ApiResponse.SuccessResponse(SuccessStatus._SET_ROUTE_GET, routeService.getSetRoute(tokenDto.getUserId()));
     }
 
+    @Operation(
+            summary = "즐겨찾는 경로 조회",
+            description = "즐겨찾는 경로 리스트를 조회합니다."
+    )
+    @GetMapping("/favorite")
+    public ApiResponse getFavoriteRouteList(@AuthenticationPrincipal TokenDto tokenDto) {
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_ROUTE_LIST_GET, routeService.getFavoriteRouteList(tokenDto));
+    }
 
+    @Operation(
+            summary = "즐겨찾는 경로 추가",
+            description = "즐겨찾는 경로를 추가합니다."
+    )
+    @PostMapping("/favorite/{routeId}")
+    public ApiResponse addFavoriteRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable(name = "routeId") Long routeId) {
+        routeService.addFavoriteRoute(tokenDto, routeId);
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_ROUTE_POST);
+    }
+
+    @Operation(
+            summary = "즐겨찾는 경로 삭제",
+            description = "즐겨찾는 경로를 삭제합니다."
+    )
+    @DeleteMapping("/favorite/{routeId}")
+    public ApiResponse deleteFavoriteRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable(name = "routeId") Long routeId) {
+        return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_ROUTE_DELETE, routeService.deleteFavoriteRoute(tokenDto, routeId));
+    }
 }

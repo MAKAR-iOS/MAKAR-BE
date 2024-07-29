@@ -3,6 +3,7 @@ package makar.dev.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.exception.GeneralException;
+import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.ErrorStatus;
 import makar.dev.converter.NotiConverter;
 import makar.dev.converter.RouteConverter;
@@ -93,6 +94,47 @@ public class RouteService {
 
         Route route = notiList.get(0).getRoute();
         return RouteConverter.toRouteDetailDto(route);
+    }
+
+    // 즐겨찾는 경로 조회
+    public List<RouteResponse.BriefRouteDto> getFavoriteRouteList(TokenDto tokenDto) {
+        User user = findUserById(tokenDto.getUserId());
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        // TODO: fix routeId order
+        return favoriteRouteList.stream()
+                .map(RouteConverter::toBriefRouteDto)
+                .toList();
+    }
+
+    // 즐겨찾는 경로 추가
+    @Transactional
+    public void addFavoriteRoute(TokenDto tokenDto, Long routeId) {
+        User user = findUserById(tokenDto.getUserId());
+        Route route = findRouteById(routeId);
+
+        // 해당 경로가 이미 즐겨찾는 경로로 설정된 경우
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        if (favoriteRouteList.contains(route))
+            throw new GeneralException(ErrorStatus.ALREADY_FAVORITE_ROUTE_SET);
+
+        user.addFavoriteRoute(route);
+    }
+
+    // 즐겨찾는 경로 삭제
+    @Transactional
+    public List<RouteResponse.BriefRouteDto> deleteFavoriteRoute(TokenDto tokenDto, Long routeId) {
+        User user = findUserById(tokenDto.getUserId());
+        Route route = findRouteById(routeId);
+
+        // 해당 경로가 즐겨찾는 경로로 설정되지 않은 경우
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        if (!favoriteRouteList.contains(route))
+            throw new GeneralException(ErrorStatus.INVALID_FAVORITE_ROUTE_DELETE);
+
+        favoriteRouteList.remove(route);
+        return favoriteRouteList.stream()
+                .map(RouteConverter::toBriefRouteDto)
+                .toList();
     }
 
     private Station findStation(String stationName, String lineNum){
@@ -269,5 +311,4 @@ public class RouteService {
         }
         return sdf.format(calendar.getTime());
     }
-
 }
