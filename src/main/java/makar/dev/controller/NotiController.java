@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/noti")
+@RequestMapping("/api/v1/noti")
 public class NotiController {
     private final NotiService notiService;
 

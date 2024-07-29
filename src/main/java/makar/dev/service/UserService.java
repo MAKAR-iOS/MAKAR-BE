@@ -56,13 +56,7 @@ public class UserService {
 
     @Transactional
     public User createUser(String id, String password, String email, String username) {
-        User user = User.builder()
-                .id(id)
-                .password(password)
-                .email(email)
-                .username(username)
-                .build();
-
+        User user = UserConverter.toUser(id, password, email, username);
         user = userRepository.save(user);
 
         return user;

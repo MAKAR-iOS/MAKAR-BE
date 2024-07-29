@@ -4,9 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
 import makar.dev.common.status.SuccessStatus;
-import makar.dev.dto.request.SignInRequest;
-import makar.dev.dto.request.SignUpRequest;
-import makar.dev.dto.response.SignResponse;
+import makar.dev.dto.request.AuthRequest;
+import makar.dev.dto.response.AuthResponse;
 import makar.dev.service.AuthService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/api/v1/auth")
 public class AuthController {
     private final AuthService authService;
 
@@ -24,8 +23,8 @@ public class AuthController {
             description = "회원가입 후 토큰을 반환합니다."
     )
     @PostMapping("/sign-up")
-    public ApiResponse<SignResponse> signUp(@RequestBody SignUpRequest request) {
-        SignResponse response = authService.signUp(request);
+    public ApiResponse<AuthResponse.SignDto> signUp(@RequestBody AuthRequest.SignUpRequest request) {
+        AuthResponse.SignDto response = authService.signUp(request);
 
         return ApiResponse.SuccessResponse(SuccessStatus._OK, response);
     }
@@ -35,8 +34,8 @@ public class AuthController {
             description = "로그인 후 토큰을 반환합니다."
     )
     @PostMapping("/sign-in")
-    public ApiResponse<SignResponse> signIn(@RequestBody SignInRequest request) {
-        SignResponse response = authService.signIn(request.getId(), request.getPassword());
+    public ApiResponse<AuthResponse.SignDto> signIn(@RequestBody AuthRequest.SignInRequest request) {
+        AuthResponse.SignDto response = authService.signIn(request.getId(), request.getPassword());
 
         return ApiResponse.SuccessResponse(SuccessStatus._OK, response);
     }
