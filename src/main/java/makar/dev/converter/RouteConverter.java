@@ -57,6 +57,15 @@ public class RouteConverter {
                 .build();
     }
 
+    public static RouteResponse.BriefRouteDto toBriefRouteDto(Route route){
+        return RouteResponse.BriefRouteDto.builder()
+                .sourceStationName(route.getSourceStation().getStationName())
+                .sourceLineNum(route.getSourceStation().getLineNum())
+                .destinationStationName(route.getDestinationStation().getStationName())
+                .destinationLineNum(route.getDestinationStation().getLineNum())
+                .build();
+    }
+
     public static SubRoute toSubRoute(RouteSearchResponse.SubPath subPath) {
         RouteSearchResponse.Lane lane = subPath.getLane().get(0);
 

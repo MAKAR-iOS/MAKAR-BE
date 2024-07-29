@@ -1,12 +1,20 @@
 package makar.dev.service;
 
 import lombok.RequiredArgsConstructor;
+import makar.dev.common.exception.GeneralException;
+import makar.dev.common.security.dto.TokenDto;
+import makar.dev.common.status.ErrorStatus;
+import makar.dev.converter.UserConverter;
+import makar.dev.domain.Noti;
+import makar.dev.domain.Route;
 import makar.dev.domain.User;
+import makar.dev.dto.response.UserResponse;
 import makar.dev.manager.DataManager;
 import makar.dev.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -42,11 +50,6 @@ public class UserService {
 //        dataManager.saveReverseTransferInfo();
     }
 
-    public void tmpCreateUser(String userName){
-        User user = new User(userName);
-        userRepository.save(user);
-    }
-
     public Optional<User> getOptionalUserById(String id) {
         return userRepository.findById(id);
     }
@@ -64,4 +67,28 @@ public class UserService {
 
         return user;
     }
+
+
+    // 홈 화면 조회
+    public UserResponse.HomeDto getHome(TokenDto tokenDto) {
+        User user = findUserById(tokenDto.getUserId());
+        boolean isRouteSet = isRouteSet(user);
+
+        List<Route> favoriteRouteList = user.getFavoriteRouteList();
+        List<Route> recentRouteList = user.getRecentRouteList();
+
+        return UserConverter.toHomeDto(isRouteSet, user.getNotiList(), favoriteRouteList, recentRouteList);
+    }
+
+    private User findUserById(Long userId){
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
+    }
+
+    private boolean isRouteSet(User user){
+        List<Noti> notiList = user.getNotiList();
+        return !notiList.isEmpty();
+    }
+
+
 }
