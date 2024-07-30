@@ -8,6 +8,7 @@ import makar.dev.converter.UserConverter;
 import makar.dev.domain.Noti;
 import makar.dev.domain.Route;
 import makar.dev.domain.User;
+import makar.dev.dto.response.NotiResponse;
 import makar.dev.dto.response.UserResponse;
 import makar.dev.manager.DataManager;
 import makar.dev.repository.UserRepository;
@@ -21,6 +22,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository userRepository;
+    private final NotiService notiService;
     private final DataManager dataManager;
 
     @Transactional
@@ -66,20 +68,21 @@ public class UserService {
     // 홈 화면 조회
     public UserResponse.HomeDto getHome(TokenDto tokenDto) {
         User user = findUserById(tokenDto.getUserId());
-        boolean isRouteSet = isRouteSet(user);
+        List<Noti> notiList = user.getNotiList();
 
-        return UserConverter.toHomeDto(isRouteSet, user.getNotiList());
+        // 경로 미설정 ver.
+        if (notiList.isEmpty())
+            return UserConverter.toRouteUnSetHomeDto();
+
+        // 경로 설정 ver.
+        NotiResponse.NotiListDto notiListDto = notiService.separateNotiList(notiList);
+        Route route = notiList.get(0).getRoute();
+        return UserConverter.toRouteSetHomeDto(notiListDto, route);
     }
 
     public User findUserById(Long userId){
         return userRepository.findById(userId)
                 .orElseThrow(() -> new GeneralException(ErrorStatus.NOT_FOUND_USER));
     }
-
-    private boolean isRouteSet(User user){
-        List<Noti> notiList = user.getNotiList();
-        return !notiList.isEmpty();
-    }
-
 
 }

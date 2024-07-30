@@ -88,7 +88,7 @@ public class NotiService {
         return separateNotiList(user.getNotiList());
     }
 
-    private NotiResponse.NotiListDto separateNotiList(List<Noti> notiList){
+    public NotiResponse.NotiListDto separateNotiList(List<Noti> notiList){
         List<Noti> makarNotiList = new ArrayList<>();
         List<Noti> getoffNotiList = new ArrayList<>();
 

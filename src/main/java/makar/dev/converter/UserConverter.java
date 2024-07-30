@@ -10,29 +10,27 @@ import java.util.List;
 
 public class UserConverter {
 
-    public static UserResponse.HomeDto toHomeDto(boolean isRouteSet, List<Noti> notiList){
-
-        if (notiList.isEmpty())
-            return UserResponse.HomeDto.builder()
-                    .isRouteSet(isRouteSet)
-                    .sourceStationName(null)
-                    .destinationStationName(null)
-                    .makarTime(null)
-                    .getoffTime(null)
-                    .notiList(null)
-                    .build();
-
-        Route route = notiList.get(0).getRoute();
-        List<NotiResponse.NotiDto> notiDtoList = notiList.stream()
-                .map(NotiConverter::toNotiDto)
-                .toList();
+    public static UserResponse.HomeDto toRouteSetHomeDto(NotiResponse.NotiListDto notiListDto, Route route){
         return UserResponse.HomeDto.builder()
-                .isRouteSet(isRouteSet)
+                .isRouteSet(true)
                 .sourceStationName(route.getSourceStation().getStationName())
                 .destinationStationName(route.getDestinationStation().getStationName())
                 .makarTime(route.getSchedule().getSourceTime())
-                .getoffTime(route.getSchedule().getDestinationTime())
-                .notiList(notiDtoList)
+                .getOffTime(route.getSchedule().getDestinationTime())
+                .makarNotiList(notiListDto.getMakarNotiDtoList())
+                .getOffNotiList(notiListDto.getGetoffNotiDtoList())
+                .build();
+    }
+
+    public static UserResponse.HomeDto toRouteUnSetHomeDto(){
+        return UserResponse.HomeDto.builder()
+                .isRouteSet(false)
+                .sourceStationName(null)
+                .destinationStationName(null)
+                .makarTime(null)
+                .getOffTime(null)
+                .makarNotiList(null)
+                .getOffNotiList(null)
                 .build();
     }
 
