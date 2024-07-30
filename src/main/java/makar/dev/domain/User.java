@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import makar.dev.common.exception.GeneralException;
+import makar.dev.common.status.ErrorStatus;
 
 import java.util.List;
 
@@ -89,7 +91,10 @@ public class User {
         }
     }
     public void removeRecentRouteList(Route route) {
-        this.recentRouteList.remove(route);
+        boolean removed = this.recentRouteList.remove(route);
+        if (!removed) {
+            throw new GeneralException(ErrorStatus.NOT_FOUND_IN_RECENT_ROUTE_LIST);
+        }
     }
     public void clearRecentRouteList() {
         this.recentRouteList.clear();
