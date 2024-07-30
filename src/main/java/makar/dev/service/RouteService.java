@@ -66,6 +66,9 @@ public class RouteService {
 
         user.addNotiList(makarNoti);
         user.addNotiList(getOffNoti);
+
+        // 해당 경로, 유저의 최근 경로 리스트에 저장
+        user.addRecentRouteList(route);
         return RouteConverter.toRouteDto(route);
     }
 
@@ -310,5 +313,28 @@ public class RouteService {
             throw new GeneralException(ErrorStatus.INVALID_SOURCE_TIME_FORMAT);
         }
         return sdf.format(calendar.getTime());
+    }
+
+    // 최근 경로 리스트 조회하기
+    public RouteResponse.RecentRouteListDto getAllRecentRoute(Long userId) {
+        User user = findUserById(userId);
+        return RouteResponse.RecentRouteListDto.builder()
+                .recentRouteList(RouteConverter.toBriefRouteDtoList(user.getRecentRouteList()))
+                .build();
+    }
+
+    // 특정 최근 경로 삭제
+    @Transactional
+    public void deleteRecentRoute(Long userId, Long routeId) {
+        User user = findUserById(userId);
+        Route route = findRouteById(routeId);
+        user.removeRecentRouteList(route);
+    }
+
+    // 모든 최근 경로 삭제
+    @Transactional
+    public void deleteAllRecentRoute(Long userId) {
+        User user = findUserById(userId);
+        user.clearRecentRouteList();
     }
 }

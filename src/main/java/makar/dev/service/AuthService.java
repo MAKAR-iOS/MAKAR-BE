@@ -54,4 +54,10 @@ public class AuthService {
 
         return AuthConverter.toSignDto(accessToken, refreshToken);
     }
+
+    @Transactional
+    public void signOut(Long userId) {
+        User user = userService.findUserById(userId);
+        user.setRefreshToken(null);
+    }
 }

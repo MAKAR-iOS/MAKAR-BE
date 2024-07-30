@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
 import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.SuccessStatus;
+import makar.dev.dto.response.RouteResponse;
 import makar.dev.service.RouteService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -80,5 +81,34 @@ public class RouteController {
     @DeleteMapping("/favorite/{routeId}")
     public ApiResponse deleteFavoriteRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable(name = "routeId") Long routeId) {
         return ApiResponse.SuccessResponse(SuccessStatus._FAVORITE_ROUTE_DELETE, routeService.deleteFavoriteRoute(tokenDto, routeId));
+    }
+
+    @Operation(
+            summary = "최근 경로 리스트 조회",
+            description = "최근에 설정된 경로 최대 5개를 조회합니다."
+    )
+    @GetMapping("/recent")
+    public ApiResponse<RouteResponse.RecentRouteListDto> getAllRecentRoute(@AuthenticationPrincipal TokenDto tokenDto) {
+        return ApiResponse.SuccessResponse(SuccessStatus._RECENT_ROUTE_LIST_GET, routeService.getAllRecentRoute(tokenDto.getUserId()));
+    }
+
+    @Operation(
+            summary = "특정 최근 경로 삭제",
+            description = "최근 경로 리스트에서 특정 경로가 삭제됩니다."
+    )
+    @DeleteMapping("/recent/{route-id}")
+    public ApiResponse deleteRecentRoute(@AuthenticationPrincipal TokenDto tokenDto, @PathVariable("route-id") Long routeId) {
+        routeService.deleteRecentRoute(tokenDto.getUserId(), routeId);
+        return ApiResponse.SuccessResponse(SuccessStatus._RECENT_ROUTE_DELETE);
+    }
+
+    @Operation(
+            summary = "모든 최근 경로 삭제",
+            description = "최근 경로 리스트에서 모든 경로가 삭제됩니다."
+    )
+    @DeleteMapping("/recent/all")
+    public ApiResponse deleteAllRecentRoute(@AuthenticationPrincipal TokenDto tokenDto) {
+        routeService.deleteAllRecentRoute(tokenDto.getUserId());
+        return ApiResponse.SuccessResponse(SuccessStatus._All_RECENT_ROUTE_DELETE);
     }
 }

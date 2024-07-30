@@ -3,10 +3,12 @@ package makar.dev.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import makar.dev.common.response.ApiResponse;
+import makar.dev.common.security.dto.TokenDto;
 import makar.dev.common.status.SuccessStatus;
 import makar.dev.dto.request.AuthRequest;
 import makar.dev.dto.response.AuthResponse;
 import makar.dev.service.AuthService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,5 +40,15 @@ public class AuthController {
         AuthResponse.SignDto response = authService.signIn(request.getId(), request.getPassword());
 
         return ApiResponse.SuccessResponse(SuccessStatus._OK, response);
+    }
+
+    @Operation(
+            summary = "로그아웃",
+            description = "로그아웃 후 DB에 저장하고 있는 리프레쉬 토큰을 삭제합니다."
+    )
+    @PostMapping("/sign-out")
+    public ApiResponse<String> signOut(@AuthenticationPrincipal TokenDto tokenDto) {
+        authService.signOut(tokenDto.getUserId());
+        return ApiResponse.SuccessResponse(SuccessStatus._OK);
     }
 }
