@@ -52,6 +52,7 @@ public enum ErrorStatus {
     NOT_FOUND_LINE_STATION(HttpStatus.NOT_FOUND, 404, "지하철 노선도 역 리스트가 존재하지 않습니다."),
     NOT_FOUND_ROUTE(HttpStatus.NOT_FOUND, 404, "존재하지 않는 경로입니다."),
     NOT_FOUND_NOTI(HttpStatus.NOT_FOUND, 404, "존재하지 않는 알림입니다."),
+    NOT_FOUND_IN_RECENT_ROUTE_LIST(HttpStatus.NOT_FOUND, 404, "최근 경로 리스트 내 존재하지 않는 경로입니다."),
 
 
     /**
