@@ -68,10 +68,7 @@ public class UserService {
         User user = findUserById(tokenDto.getUserId());
         boolean isRouteSet = isRouteSet(user);
 
-        List<Route> favoriteRouteList = user.getFavoriteRouteList();
-        List<Route> recentRouteList = user.getRecentRouteList();
-
-        return UserConverter.toHomeDto(isRouteSet, user.getNotiList(), favoriteRouteList, recentRouteList);
+        return UserConverter.toHomeDto(isRouteSet, user.getNotiList());
     }
 
     public User findUserById(Long userId){
