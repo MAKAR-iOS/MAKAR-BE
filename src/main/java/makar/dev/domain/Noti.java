@@ -34,9 +34,9 @@ public class Noti implements Comparable<Noti>{
     @Override
     public int compareTo(Noti noti) {
         if (noti.getNoti_minute() < noti_minute)
-            return 1;
-        else if (noti.getNoti_minute() > noti_minute)
             return -1;
+        else if (noti.getNoti_minute() > noti_minute)
+            return 1;
         return 0;
     }
 }
