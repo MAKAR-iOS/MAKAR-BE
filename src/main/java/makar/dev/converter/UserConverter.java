@@ -6,20 +6,24 @@ import makar.dev.dto.response.NotiResponse;
 import makar.dev.dto.response.UserResponse;
 
 import java.util.Collections;
+import java.util.List;
 
 public class UserConverter {
 
     public static UserResponse.HomeDto toRouteSetHomeDto(NotiResponse.NotiListDto notiListDto, Route route){
-        Collections.reverse(notiListDto.getMakarNotiDtoList());
-        Collections.reverse(notiListDto.getGetoffNotiDtoList());
+        List<NotiResponse.NotiDto> makarNotiDtoList = notiListDto.getMakarNotiDtoList();
+        List<NotiResponse.NotiDto> getOffNotiList = notiListDto.getGetoffNotiDtoList();
+        Collections.reverse(makarNotiDtoList);
+        Collections.reverse(getOffNotiList);
+
         return UserResponse.HomeDto.builder()
                 .isRouteSet(true)
                 .sourceStationName(route.getSourceStation().getStationName())
                 .destinationStationName(route.getDestinationStation().getStationName())
                 .makarTime(route.getSchedule().getSourceTime())
                 .getOffTime(route.getSchedule().getDestinationTime())
-                .makarNotiList(notiListDto.getMakarNotiDtoList())
-                .getOffNotiList(notiListDto.getGetoffNotiDtoList())
+                .makarNotiList(makarNotiDtoList)
+                .getOffNotiList(getOffNotiList)
                 .build();
     }
 
