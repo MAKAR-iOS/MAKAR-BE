@@ -14,6 +14,7 @@ public class UserResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class HomeDto {
+        private Long routeId;
         private boolean isRouteSet;
         private String sourceStationName;
         private String destinationStationName;

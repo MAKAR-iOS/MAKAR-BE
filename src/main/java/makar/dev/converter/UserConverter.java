@@ -10,6 +10,7 @@ public class UserConverter {
     public static UserResponse.HomeDto toRouteSetHomeDto(NotiResponse.NotiListDto notiListDto, Route route){
         return UserResponse.HomeDto.builder()
                 .isRouteSet(true)
+                .routeId(route.getRouteId())
                 .sourceStationName(route.getSourceStation().getStationName())
                 .destinationStationName(route.getDestinationStation().getStationName())
                 .makarTime(route.getSchedule().getSourceTime())
@@ -22,6 +23,7 @@ public class UserConverter {
     public static UserResponse.HomeDto toRouteUnSetHomeDto(){
         return UserResponse.HomeDto.builder()
                 .isRouteSet(false)
+                .routeId(0L)
                 .sourceStationName(null)
                 .destinationStationName(null)
                 .makarTime(null)
