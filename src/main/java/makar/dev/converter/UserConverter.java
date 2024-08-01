@@ -1,12 +1,9 @@
 package makar.dev.converter;
 
-import makar.dev.domain.Noti;
 import makar.dev.domain.Route;
 import makar.dev.domain.User;
 import makar.dev.dto.response.NotiResponse;
 import makar.dev.dto.response.UserResponse;
-
-import java.util.List;
 
 public class UserConverter {
 
