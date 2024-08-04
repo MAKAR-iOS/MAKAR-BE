@@ -5,7 +5,7 @@ import makar.dev.domain.data.RouteSearchResponse;
 import makar.dev.dto.response.RouteResponse;
 
 import java.util.ArrayList;
-import java.util.Comparator;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -70,7 +70,8 @@ public class RouteConverter {
     }
 
     public static List<RouteResponse.BriefRouteDtoWithRouteId> toBriefRouteDtoList(List<Route> routes){
-        routes.sort(Comparator.comparingInt(Route::getRecentOrder).reversed());
+        // recent_route_id가 큰 것부터 조회되도록(최신순) 리스트의 순서를 뒤집음
+        Collections.reverse(routes);
 
         return routes.stream()
                 .map(route ->
