@@ -31,6 +31,7 @@ public class RouteService {
     private final ScheduleRepository scheduleRepository;
     private final UserRepository userRepository;
     private final NotiRepository notiRepository;
+    private final RecentRouteRepository recentRouteRepository;
     private final APIManager apiManager;
     private final MakarManager makarManager;
     private final TransferService transferService;
@@ -67,8 +68,9 @@ public class RouteService {
         user.addNotiList(makarNoti);
         user.addNotiList(getOffNoti);
 
-        // 해당 경로, 유저의 최근 경로 리스트에 저장
-        user.addRecentRouteList(route);
+        // 해당 경로, 유저 정보를 갖는 RecentRoute 객체 생성 후 저장
+        addRecentRoute(user, route);
+
         return RouteConverter.toRouteDto(route);
     }
 
@@ -315,11 +317,34 @@ public class RouteService {
         return sdf.format(calendar.getTime());
     }
 
+    // 특정 경로, 유저를 기반으로 하는 RecentRoute 객체 생성 후 저장
+    @Transactional
+    public void addRecentRoute(User user, Route route) {
+        // 동일한 routeId를 가진 Route가 이미 최근 경로 리스트에 존재한다면
+        // DB와 리스트에서 제거
+        recentRouteRepository.findByUserAndRoute(user, route).ifPresent(
+                recentRoute -> {
+                    recentRouteRepository.delete(recentRoute);
+                    user.removeRecentRoute(recentRoute);
+                }
+        );
+
+        // 최근 경로 리스트 사이즈 최대 5개 유지
+        if (user.getRecentRouteList().size() >= 5) {
+            RecentRoute recentRoute = user.getRecentRouteList().get(0);
+            recentRouteRepository.delete(recentRoute);
+        }
+
+        // 새로운 RecentRoute 생성 및 저장
+        RecentRoute newRecentRoute = new RecentRoute(user, route);
+        recentRouteRepository.save(newRecentRoute);
+    }
+
     // 최근 경로 리스트 조회하기
     public RouteResponse.RecentRouteListDto getAllRecentRoute(Long userId) {
         User user = findUserById(userId);
         return RouteResponse.RecentRouteListDto.builder()
-                .recentRouteList(RouteConverter.toBriefRouteDtoList(user.getRecentRouteList()))
+                .recentRouteList(RouteConverter.toBriefRouteDtoList(user.findRecentRouteList()))
                 .build();
     }
 
@@ -328,13 +353,18 @@ public class RouteService {
     public void deleteRecentRoute(Long userId, Long routeId) {
         User user = findUserById(userId);
         Route route = findRouteById(routeId);
-        user.removeRecentRouteList(route);
+        RecentRoute recentRoute = recentRouteRepository.findByUserAndRoute(user, route).orElseThrow(
+                () -> new GeneralException(ErrorStatus.NOT_FOUND_IN_RECENT_ROUTE_LIST)
+        );
+        recentRouteRepository.delete(recentRoute);
+        user.removeRecentRoute(recentRoute);
     }
 
     // 모든 최근 경로 삭제
     @Transactional
     public void deleteAllRecentRoute(Long userId) {
         User user = findUserById(userId);
+        recentRouteRepository.deleteByUser(user);
         user.clearRecentRouteList();
     }
 }

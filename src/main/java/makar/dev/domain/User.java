@@ -6,10 +6,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import makar.dev.common.exception.GeneralException;
-import makar.dev.common.status.ErrorStatus;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -46,8 +46,8 @@ public class User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user")
     private List<Noti> notiList; //알림 설정
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Route> recentRouteList; //최근 경로 리스트
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<RecentRoute> recentRouteList = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Route> favoriteRouteList; //즐겨찾는 경로 리스트
@@ -62,40 +62,17 @@ public class User {
     public boolean isFavoriteSchoolStationExist(){return this.favoriteSchoolStation != null;}
     public void addNotiList(Noti noti){this.notiList.add(noti);}
     public void addFavoriteRoute(Route route){this.favoriteRouteList.add(favoriteRouteList.size(), route);}
-    public void addRecentRouteList(Route route) {
-        int maxOrder = -1;
-        Route existingRoute = null;
-
-        // 동일한 routeId를 가진 Route가 이미 최근 경로 리스트에 존재하는지 확인
-        for (Route r : this.recentRouteList) {
-            if (r.getRouteId().equals(route.getRouteId())) {
-                existingRoute = r;
-            }
-            if (r.getRecentOrder() > maxOrder) {
-                maxOrder = r.getRecentOrder();
-            }
-        }
-
-        if (existingRoute != null) {
-            // 이미 리스트에 존재하는 경우 recentOrder만 수정
-            existingRoute.setRecentOrder(maxOrder + 1);
-        } else {
-            // 최근 경로 리스트 사이즈 최대 5개 유지
-            if (this.recentRouteList.size() >= 5) {
-                this.recentRouteList.remove(0);
-            }
-
-            // 새로운 Route일 경우 리스트의 마지막에 추가
-            route.setRecentOrder(maxOrder + 1);
-            this.recentRouteList.add(route);
-        }
+    // user의 최근 경로를 Route 타입의 List로 반환하는 함수
+        public List<Route> findRecentRouteList() {
+            return this.recentRouteList.stream()
+                    .map(RecentRoute::getRoute)
+                    .collect(Collectors.toList());
     }
-    public void removeRecentRouteList(Route route) {
-        boolean removed = this.recentRouteList.remove(route);
-        if (!removed) {
-            throw new GeneralException(ErrorStatus.NOT_FOUND_IN_RECENT_ROUTE_LIST);
-        }
+    // user의 최근 경로 리스트에서 특정 최근 경로 삭제
+    public void removeRecentRoute(RecentRoute route) {
+        this.getRecentRouteList().remove(route);
     }
+    // user의 최근 경로 리스트 비우기
     public void clearRecentRouteList() {
         this.recentRouteList.clear();
     }
