@@ -35,15 +35,7 @@ public class Route {
     @Column(nullable = false)
     private List<SubRoute> subRouteList;
 
-    // 최근 경로 리스트 내 순서
-    @Column(name = "recent_order")
-    private int recentOrder;
-
     public void updateSchedule(Schedule schedule){
         this.schedule = schedule;
-    }
-
-    public void setRecentOrder(int recentOrder) {
-        this.recentOrder = recentOrder;
     }
 }
