@@ -63,6 +63,9 @@ public class MakarManager {
                 computeTransferMakarTime(takingTime, dayOfWeek, subwaySchedule, lastSubRoute.getLineNum(), lastSubRoute.getWayCode(), lastSubRoute.getFromStationCode(), lastSubRoute.getToStationCode());
                 takingTime = resultCalender.get();
             }
+            canGoInSubway.set(false);
+            resultTimeInfo.set(null);
+            resultCalender.set(null);
             makarTimes.add(0, takingTime.getTime());
         }
         return takingTime;
