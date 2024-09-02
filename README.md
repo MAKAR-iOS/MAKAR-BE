@@ -1,7 +1,7 @@
 ## 지하철 막차 알림 서비스, MAKAR
 
 
-<img width="1920" alt="표지" src="https://github.com/user-attachments/assets/db71a447-541b-4f48-8b69-4dd0b233dbbd">
+<img width="1920" alt="표지" src="https://github.com/user-attachments/assets/65ecc924-72f6-478b-a9c7-ede4ecd1b42c">
 
 <br><br><br>
 
